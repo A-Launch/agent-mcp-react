@@ -139,6 +139,63 @@ describe('a page script calling the shared registry directly', () => {
     expect(refused.text.toLowerCase()).toContain('validation');
   });
 
+  it('is refused by the REGISTRY before we see it, so no observer learns of it', async () => {
+    // **Reported from the field: an operator watching the call log reads silence as "nobody called
+    // it".** What actually happens is that the adopted registry validates arguments against the
+    // declared schema itself, in `validateArgsForTool`, and throws before it ever invokes the
+    // descriptor's callback. This library's own validation on this route — and the observation it
+    // reports — is downstream of a call that never arrives.
+    //
+    // The library is not silent by choice and cannot be made to speak: there is no signal to observe.
+    // What can be done is to stop the silence being mistaken for absence, which is why this is a case
+    // rather than a paragraph.
+    //
+    // **If a registry ever stops pre-validating, this goes red** — our check runs, the refusal is
+    // observed, and the expectation below becomes false. That is the right moment to learn it, and it
+    // is why the assertion is on the absence rather than on the mechanism producing it.
+    const errors: { code?: string }[] = [];
+    let entered = 0;
+    render(
+      <AgentMcpProvider
+        capabilities={APPLICATION_ONLY}
+        connection={{ getUrl: neverConnects }}
+        server={{ name: 'page', version: '0' }}
+        validation={{ validator: testValidator }}
+        onUnexpectedState={() => undefined}
+        onToolError={(event) => {
+          const failure = event.failure;
+          errors.push(failure !== undefined && 'code' in failure ? { code: failure.code } : {});
+        }}
+      >
+        <Page
+          onCall={() => {
+            entered += 1;
+          }}
+        />
+      </AgentMcpProvider>,
+    );
+    await act(async () => {
+      await until(async () => {
+        const registry = (
+          document as unknown as { modelContext?: { getTools?: () => Promise<unknown[]> } }
+        ).modelContext;
+        const tools = (await registry?.getTools?.()) ?? [];
+        return tools.length > 0;
+      }, 'waited for the tool to reach the registry');
+    });
+
+    const refused = await callThroughRegistry('panel.set', { level: 'medium' });
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(refused.ok).toBe(false);
+    expect(entered).toBe(0);
+    // The whole point: refused, and nothing to see.
+    expect(errors).toEqual([]);
+  });
+
   it('reaches the handler when they do — so the refusal above is a check, not a broken route', async () => {
     let entered = 0;
     await mount(() => {
