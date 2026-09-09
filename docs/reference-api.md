@@ -1,6 +1,6 @@
 # API reference
 
-Every public export of `@agent-mcp/react`, by subpath. **57 values and 57 types across nine entry
+Every public export of `agent-mcp-react`, by subpath. **57 values and 57 types across nine entry
 points.** The list was extracted from the shipped `.d.ts` files and every value was verified to import
 from the built package, so it describes what is in the tarball rather than what is in `src/`.
 
@@ -9,15 +9,15 @@ is internal and may change without notice.
 
 | Subpath | Values | Types | What it is for |
 |---|---:|---:|---|
-| [`@agent-mcp/react`](#agent-mcpreact) | 42 | 37 | The provider, the hooks, and the closed vocabularies |
-| [`/actions`](#agent-mcpreactactions) | 1 | 2 | Declaring a tool from outside React |
-| [`/validation`](#agent-mcpreactvalidation) | 2 | 1 | The bundled Ajv validator |
-| [`/dom`](#agent-mcpreactdom) | 6 | 5 | Level 2 — semantic DOM control |
-| [`/evaluate`](#agent-mcpreactevaluate) | 1 | 1 | Level 3 — JavaScript execution |
-| [`/devtools`](#agent-mcpreactdevtools) | 1 | 3 | The in-page inspector |
-| [`/redux`](#agent-mcpreactredux) | 1 | 3 | Redux action binding |
-| [`/zustand`](#agent-mcpreactzustand) | 1 | 2 | Zustand action binding |
-| [`/router`](#agent-mcpreactrouter) | 2 | 3 | Navigation and URL-backed filters |
+| [`agent-mcp-react`](#agent-mcp-react) | 42 | 37 | The provider, the hooks, and the closed vocabularies |
+| [`/actions`](#agent-mcp-reactactions) | 1 | 2 | Declaring a tool from outside React |
+| [`/validation`](#agent-mcp-reactvalidation) | 2 | 1 | The bundled Ajv validator |
+| [`/dom`](#agent-mcp-reactdom) | 6 | 5 | Level 2 — semantic DOM control |
+| [`/evaluate`](#agent-mcp-reactevaluate) | 1 | 1 | Level 3 — JavaScript execution |
+| [`/devtools`](#agent-mcp-reactdevtools) | 1 | 3 | The in-page inspector |
+| [`/redux`](#agent-mcp-reactredux) | 1 | 3 | Redux action binding |
+| [`/zustand`](#agent-mcp-reactzustand) | 1 | 2 | Zustand action binding |
+| [`/router`](#agent-mcp-reactrouter) | 2 | 3 | Navigation and URL-backed filters |
 
 **Importing a subpath is one of two independent conditions for Level 2 and Level 3.** Importing
 `/dom` or `/evaluate` does not grant anything; an operator must also grant the capability. Conversely
@@ -25,7 +25,7 @@ a granted capability with nothing imported reaches no tool. Neither implies the 
 
 ---
 
-## `@agent-mcp/react`
+## `agent-mcp-react`
 
 ### The provider
 
@@ -128,7 +128,7 @@ Guards: `isRuntimeFailureCode`, `isReactRefusedCode`, `isResolutionRefusal`, `is
 
 ---
 
-## `@agent-mcp/react/actions`
+## `agent-mcp-react/actions`
 
 ```ts
 function registerMcpTool(definition: McpToolDefinition): McpToolRegistration
@@ -148,7 +148,7 @@ Types: `McpToolDefinition`, `McpToolRegistration`.
 
 ---
 
-## `@agent-mcp/react/validation`
+## `agent-mcp-react/validation`
 
 ```ts
 function createAjvValidator(options?: AjvValidatorOptions): SchemaValidator
@@ -169,7 +169,7 @@ Types: `AjvValidatorOptions`.
 
 ---
 
-## `@agent-mcp/react/dom`
+## `agent-mcp-react/dom`
 
 Level 2. **Never registered** — absent from the document's shared registry in every configuration,
 including one that granted it, because anything in that registry is callable by any page script
@@ -195,7 +195,7 @@ write tool. Experimental in `0.1`. See [dom-inspection.md](dom-inspection.md).
 
 ---
 
-## `@agent-mcp/react/evaluate`
+## `agent-mcp-react/evaluate`
 
 Level 3, **disabled by default**, behind four conditions none of which implies another: the
 application imports this subpath, an operator grants `evaluate`, a confirmation resolver is wired, and
@@ -213,7 +213,7 @@ Types: `EvaluateToolOptions`.
 
 ---
 
-## `@agent-mcp/react/devtools`
+## `agent-mcp-react/devtools`
 
 ```ts
 function createInspector(options: InspectorOptions): Inspector
@@ -228,7 +228,7 @@ renders.
 
 ---
 
-## `@agent-mcp/react/redux`
+## `agent-mcp-react/redux`
 
 ```ts
 function bindReduxTool<A>(binding: ReduxToolBinding<A>): McpToolRegistration
@@ -241,7 +241,7 @@ Types: `ReduxActionCreator`, `ReduxDispatch`, `ReduxToolBinding`.
 
 ---
 
-## `@agent-mcp/react/zustand`
+## `agent-mcp-react/zustand`
 
 ```ts
 function bindZustandTool(binding: ZustandToolBinding): McpToolRegistration
@@ -255,7 +255,7 @@ Types: `ZustandAction`, `ZustandToolBinding`.
 
 ---
 
-## `@agent-mcp/react/router`
+## `agent-mcp-react/router`
 
 ```ts
 function bindNavigationTool(binding: NavigationToolBinding): McpToolRegistration

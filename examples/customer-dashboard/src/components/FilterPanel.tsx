@@ -1,4 +1,4 @@
-import { useMcpState, useMcpTool } from '@agent-mcp/react';
+import { useMcpState, useMcpTool } from 'agent-mcp-react';
 import type { ReactNode } from 'react';
 import {
   ACTOR,

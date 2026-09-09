@@ -1,4 +1,4 @@
-import { createTicketMinter, TICKET_REFUSAL } from '@agent-mcp/mock-agent';
+import { createTicketMinter, TICKET_REFUSAL } from 'agent-mcp-mock-agent';
 import { describe, expect, it } from 'vitest';
 
 // The ticket minter's rules, asserted without a socket. `tests/transport/` proves the gateway applies

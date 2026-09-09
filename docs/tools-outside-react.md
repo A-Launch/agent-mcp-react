@@ -4,7 +4,7 @@ Some things an agent should be able to do do not live in a component. A logout i
 service. A navigation in a router. An action registered before the application mounts at all.
 
 ```ts
-import { registerMcpTool } from '@agent-mcp/react/actions';
+import { registerMcpTool } from 'agent-mcp-react/actions';
 
 const logout = registerMcpTool({
   name: 'session.logout',

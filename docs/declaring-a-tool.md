@@ -9,7 +9,7 @@ by accident.
 ## The shape
 
 ```tsx
-import { AgentMcpProvider, useMcpTool } from "@agent-mcp/react";
+import { AgentMcpProvider, useMcpTool } from "agent-mcp-react";
 
 function StatusPanel() {
   const [status, setStatus] = useState("ready");
@@ -205,7 +205,7 @@ about its own output is worse than one that fails.
 advertising a contract nothing enforces is how a schema goes back to being documentation.
 
 ```ts
-import { createAjvValidator } from '@agent-mcp/react/validation';
+import { createAjvValidator } from 'agent-mcp-react/validation';
 
 const validator = createAjvValidator();
 

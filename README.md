@@ -1,4 +1,4 @@
-# `@agent-mcp/react`
+# `agent-mcp-react`
 
 **Make your React page an MCP server.**
 
@@ -20,10 +20,10 @@ and an agent runtime where the MCP client lives.
 
 ## Status
 
-`0.2.0` is the current version and the first one published from this repository; its notes are in
-[docs/releases/0.2.0.md](docs/releases/0.2.0.md). `0.1.0` came before this repository existed and its
-notes are kept in [docs/releases/0.1.0.md](docs/releases/0.1.0.md).
-Apache-2.0.
+`0.2.0`, Apache-2.0. Release notes: [docs/releases/0.2.0.md](docs/releases/0.2.0.md). Every version
+and what changed in it: [CHANGELOG.md](CHANGELOG.md).
+
+Not on the npm registry. Install it from a packed tarball — see below.
 
 ## What the agent can do
 
@@ -52,7 +52,7 @@ not nine browser-and-version combinations. What has been run, and what has not:
 
 ## Install
 
-Not on the npm registry yet. Pack from this repo:
+Pack from this repo:
 
 ```bash
 pnpm pack                           # → agent-mcp-react-0.2.0.tgz
@@ -61,7 +61,7 @@ pnpm pack                           # → agent-mcp-react-0.2.0.tgz
 Then depend on the tarball:
 
 ```jsonc
-{ "dependencies": { "@agent-mcp/react": "file:../agent-mcp-react/agent-mcp-react-0.2.0.tgz" } }
+{ "dependencies": { "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.0.tgz" } }
 ```
 
 A local directory dependency (`file:../agent-mcp-react`) does not work: `publishConfig` applies when
@@ -70,10 +70,10 @@ a package is packed, never when a directory is linked. Routes, and what fails:
 
 ESM only. React `>=18` as a peer. Node `>=22` for the toolchain.
 
-When it is published:
+Once it is on the registry, the install is the ordinary one:
 
 ```bash
-npm install @agent-mcp/react
+npm install agent-mcp-react
 ```
 
 ## Use it
@@ -82,8 +82,8 @@ Four props are required: `connection`, `server`, `capabilities`, and `onUnexpect
 snippet is compiled against the packed tarball from a project outside this repository.
 
 ```tsx
-import { AgentMcpProvider, CONFIRMATION } from '@agent-mcp/react';
-import { createAjvValidator } from '@agent-mcp/react/validation';
+import { AgentMcpProvider, CONFIRMATION } from 'agent-mcp-react';
+import { createAjvValidator } from 'agent-mcp-react/validation';
 
 <AgentMcpProvider
   connection={{
@@ -118,7 +118,7 @@ Declare a tool in the component that owns the feature. It exists while that comp
 and the handler always reads current state:
 
 ```tsx
-import { useMcpTool } from '@agent-mcp/react';
+import { useMcpTool } from 'agent-mcp-react';
 
 useMcpTool({
   name: 'account.set_health',
@@ -201,13 +201,13 @@ Required after any change under `src/`, `examples/` or `tools/`. What it runs, a
 in `package.json` — it builds the library and the examples, runs the unit, React, transport and
 integration suites, typechecks, lints, and verifies the packed tarball and an external consumer.
 
-`pnpm build` is in the gate because it had been broken for a long stretch of the project's history:
-exiting non-zero while emitting unloadable JavaScript, and emitting nothing at all while exiting zero
-on an incremental run. `verify:package` is there because `pnpm pack` once produced a tarball that
-resolved none of its exports while every other check was green. `verify:consumer` goes one question
-further: it installs the packed tarball into a project **outside this repository**, typechecks it
-against the shipped types and bundles it with a real bundler. It exists because the minimal example
-in this very README did not compile. Neither failure was visible from inside the repo.
+Three of those ask a question the suites cannot. `pnpm build` asserts what is **in** `dist/` rather
+than what the compiler returned, because a build can exit zero having emitted nothing and exit non-zero
+having emitted something unloadable. `verify:package` resolves every export the packed tarball
+declares, from inside the tarball. `verify:consumer` installs that tarball into a project **outside
+this repository**, typechecks it against the shipped types and bundles it with a real bundler — which
+is the only check that asks whether an embedder can actually consume this package, since everything
+in-repo resolves through workspace paths and a root tsconfig instead.
 
 Three more run separately, because they need dev servers or browser binaries:
 

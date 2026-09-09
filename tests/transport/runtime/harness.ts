@@ -3,7 +3,7 @@ import {
   connectClient,
   type Gateway,
   startGateway,
-} from '@agent-mcp/mock-agent';
+} from 'agent-mcp-mock-agent';
 import type { AgentCapabilities } from '../../../src/index.ts';
 import type {
   BuiltInTool,

@@ -1,12 +1,12 @@
-import { Board } from '@agent-mcp/example-composable-board/src/components/Board.tsx';
-import { useConfirmationSurface } from '@agent-mcp/example-composable-board/src/components/ConfirmationDialog.tsx';
-import { resetBoardForTests } from '@agent-mcp/example-composable-board/src/state/board.ts';
-import { type BrowserConnection, connectClient, startGateway } from '@agent-mcp/mock-agent';
+import { Board } from 'agent-mcp-example-composable-board/src/components/Board.tsx';
+import { useConfirmationSurface } from 'agent-mcp-example-composable-board/src/components/ConfirmationDialog.tsx';
+import { resetBoardForTests } from 'agent-mcp-example-composable-board/src/state/board.ts';
+import { type BrowserConnection, connectClient, startGateway } from 'agent-mcp-mock-agent';
 // Imported for its SIDE EFFECT, exactly as the demonstrator's own entry point imports it: it declares
 // `board.add_panel`, `board.remove_panel` and `board.reorder` at module scope, before anything renders.
 // Without this line the suite would mount a board with no way to compose it — and the symptom would be
 // an empty tool list rather than an error, which is precisely the failure mode worth a comment.
-import '@agent-mcp/example-composable-board/src/shell-tools.ts';
+import 'agent-mcp-example-composable-board/src/shell-tools.ts';
 // The PURE entry point. `@testing-library/react` registers an automatic `cleanup()` in `afterEach`
 // whenever globals are enabled, which this project enables — and these cases build one application and
 // advance it, so an automatic teardown between cases would destroy the world mid-narrative.

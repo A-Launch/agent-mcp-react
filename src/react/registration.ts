@@ -199,7 +199,7 @@ async function compileSchemas(
     throw new RuntimeError(
       RUNTIME_FAILURE.validatorMissing,
       `the tool "${name}" declares a schema and no validator is installed, so it was not registered. ` +
-        'Import createAjvValidator from "@agent-mcp/react/validation" and pass it to AgentMcpProvider ' +
+        'Import createAjvValidator from "agent-mcp-react/validation" and pass it to AgentMcpProvider ' +
         'as validation={{ validator }}.',
       name,
     );

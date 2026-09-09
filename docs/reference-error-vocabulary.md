@@ -8,7 +8,7 @@ library can add a member. If you are handling a failure, compare against the exp
 than the literal: `RUNTIME_FAILURE.toolNotFound`, not `'MCP_TOOL_NOT_FOUND'`.
 
 **Five of the six are exported; `TRANSPORT_FAILURE` is not.** `RUNTIME_FAILURE`, `REGISTRY_UNAVAILABLE`,
-`REGISTRATION_REFUSED`, `CLAIM_REFUSED` and `REACT_REFUSED` come from `@agent-mcp/react`. The four
+`REGISTRATION_REFUSED`, `CLAIM_REFUSED` and `REACT_REFUSED` come from `agent-mcp-react`. The four
 `MCP_WS_*` codes reach you only as the `code` on a failure the provider reports, so there is no constant
 to compare against and matching the literal is what you have.
 

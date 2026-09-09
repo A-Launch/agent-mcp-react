@@ -1,4 +1,4 @@
-import type { SchemaValidator } from '@agent-mcp/react';
+import type { SchemaValidator } from 'agent-mcp-react';
 
 // A validator that compiles no code, for a page served under a strict Content-Security-Policy.
 //

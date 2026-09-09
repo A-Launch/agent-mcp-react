@@ -1,4 +1,4 @@
-# `@agent-mcp/react` documentation
+# `agent-mcp-react` documentation
 
 Organized by the [Diataxis](https://diataxis.fr/) quadrants — **tutorial** (learning), **how-to** (a
 specific task), **reference** (the facts), **explanation** (the why). Pick your audience.

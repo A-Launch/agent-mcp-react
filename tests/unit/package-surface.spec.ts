@@ -68,7 +68,7 @@ function runtimeImports(source: string): Map<string, number> {
   for (const [index, text] of source.split('\n').entries()) {
     if (/^\s*(import|export)\s+type\s/.test(text)) continue;
     // A line inside a comment is not an import. This is not a nicety: the modules here document their
-    // own usage, and a doc comment showing `import { createAjvValidator } from '@agent-mcp/react/validation'`
+    // own usage, and a doc comment showing `import { createAjvValidator } from 'agent-mcp-react/validation'`
     // is exactly the example an author needs — while looking, to a line scanner, like the library
     // importing itself. Reported as a missing dependency, which it is not.
     //

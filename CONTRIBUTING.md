@@ -1,4 +1,4 @@
-# Contributing to `@agent-mcp/react`
+# Contributing to `agent-mcp-react`
 
 This file owns every convention in this repository. Where another document repeats one of them, this
 is the version that binds, and the repetition is a defect to report.
@@ -381,7 +381,7 @@ Do not submit one ahead of a maintainer asking for it:
 |---|---|
 | A production ticket service | `tools/mock-agent/` mints dev tickets. The provider takes `getUrl()` and never a credential, so the seam is already the real one |
 | Multi-tab orchestration policy | Each tab is an independent server; selection belongs to the agent runtime. The library exposes tab metadata and decides nothing |
-| A schema-validation library of this project's own | The tool descriptor carries a JSON Schema and the validator arrives through `@agent-mcp/react/validation`; tool schemas are declared in no library's dialect |
+| A schema-validation library of this project's own | The tool descriptor carries a JSON Schema and the validator arrives through `agent-mcp-react/validation`; tool schemas are declared in no library's dialect |
 | Rate limiting or call quotas | None. Per-tool policy is the only gate |
 | A telemetry pipeline | Structured events through `onToolCall` and the inspector |
 | A Streamable HTTP transport | None — a non-goal |

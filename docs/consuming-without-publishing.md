@@ -21,7 +21,7 @@ pnpm pack                 # → agent-mcp-react-0.2.0.tgz  (runs `prepare`, so d
 // In the consuming project's package.json
 {
   "dependencies": {
-    "@agent-mcp/react": "file:../agent-mcp-react/agent-mcp-react-0.2.0.tgz"
+    "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.0.tgz"
   }
 }
 ```
@@ -39,7 +39,7 @@ outside this repository, typechecks against the shipped types and bundles with a
 ## A git URL — works on npm and yarn
 
 ```jsonc
-{ "dependencies": { "@agent-mcp/react": "github:A-Launch/agent-mcp-react#develop" } }
+{ "dependencies": { "agent-mcp-react": "github:A-Launch/agent-mcp-react#develop" } }
 ```
 
 `dist/` is **not** committed, so the package has to be built after cloning. `package.json` declares
@@ -57,7 +57,7 @@ not exist. The install still exits `0`. Measured, not imagined, on 2026-08-30.
 ## A local directory — does NOT work
 
 ```jsonc
-{ "dependencies": { "@agent-mcp/react": "file:../agent-mcp-react" } }   // ✗
+{ "dependencies": { "agent-mcp-react": "file:../agent-mcp-react" } }   // ✗
 ```
 
 This is the most natural thing to try and it is the one route that cannot work. **`publishConfig` is
@@ -66,14 +66,14 @@ development export map — which points at `./src/*.ts`, and `src/` is not in `f
 and nothing points at it.
 
 The symptom is partial and therefore confusing: some imports resolve and subpaths like
-`@agent-mcp/react/validation` report `TS2307: Cannot find module`. Pack the tarball instead.
+`agent-mcp-react/validation` report `TS2307: Cannot find module`. Pack the tarball instead.
 
 ## A pnpm workspace — for a monorepo
 
 If the consuming application lives in the same workspace, use the workspace protocol:
 
 ```jsonc
-{ "dependencies": { "@agent-mcp/react": "workspace:*" } }
+{ "dependencies": { "agent-mcp-react": "workspace:*" } }
 ```
 
 This is how `examples/customer-dashboard` consumes the library. It resolves to the development export

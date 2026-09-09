@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { connectClient } from '@agent-mcp/mock-agent';
+import { connectClient } from 'agent-mcp-mock-agent';
 import { useState } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { CONNECTION_STATUS, useMcpTool } from '../../../src/react/index.ts';

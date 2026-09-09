@@ -41,7 +41,7 @@
  * the page. That is handled by refusing loudly on a value that cannot be made sense of, never by
  * repairing one — silently rebuilding a marker is how a second identity gets in.
  */
-const IDENTITY_KEY = Symbol.for('@agent-mcp/react.page-instance-identity');
+const IDENTITY_KEY = Symbol.for('agent-mcp-react.page-instance-identity');
 
 /**
  * Why a page instance has no identity to give.

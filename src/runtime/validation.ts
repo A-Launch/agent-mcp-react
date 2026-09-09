@@ -56,7 +56,7 @@ export interface CompiledSchema {
 /**
  * What an application supplies so its declared schemas can be enforced.
  *
- * Obtained from `@agent-mcp/react/validation`, or written by an embedder that has its own. Passed to
+ * Obtained from `agent-mcp-react/validation`, or written by an embedder that has its own. Passed to
  * the provider as a value rather than installed by importing a module for its side effects: a
  * validator that arrives because somebody imported something is one whose presence cannot be reasoned
  * about from the code that depends on it.
