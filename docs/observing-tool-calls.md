@@ -102,6 +102,39 @@ Two more absences, measured rather than assumed:
   an `inputSchema` is validated before the callback this library registered is ever invoked, so there
   is nothing for us to observe. That cannot be closed from inside this library.
 
+## Reading the registry from your own code
+
+**`document.modelContext` is not there when your component mounts, and a consumer that looks once
+stays empty forever.** The provider adopts the registry inside an effect and the adoption is
+asynchronous — it may install a portability shim first. React runs a child's effects before its
+parent's, so a component that reads the registry in its own mount effect is asking before the
+provider has answered. Nothing is wrong and nothing reports anything; the reader simply sees no
+registry and, having looked once, never learns otherwise.
+
+**Wire `onRegistryChange` and read it from there.** It fires when the registry's contents change,
+which for an application that declares any tools means the first registration — by which point the
+registry exists:
+
+```tsx
+<AgentMcpProvider
+  …
+  onRegistryChange={() => {
+    const registry = document.modelContext;
+    // Present from here on. Subscribe, enumerate, render — whatever your panel does.
+  }}
+>
+```
+
+That covers the ordinary case. **It does not cover an application that declares no tools at all**,
+where nothing ever changes and the event never fires. There is no public API today that resolves when
+the registry becomes available and nothing else; `ensureRegistry` exists internally and is deliberately
+not exported, because acquiring a page's registry belongs to the provider's lifecycle rather than to
+whoever imported a module. If you need readiness without a registration, poll for it on a short
+interval and stop when it appears — the same thing this repository's own end-to-end helpers do.
+
+**Do not read the registry at module scope.** It would run during server-side rendering, where there
+is no document at all.
+
 ## The registry-change event
 
 The document's registry is shared with every script on the page, so "the registry moved" and "what the

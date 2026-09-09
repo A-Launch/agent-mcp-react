@@ -276,6 +276,12 @@ including `true`, `undefined`, and a throw.
 > script on the page still runs it.** The same is true of `confirmation: 'required'`, and of an
 > operator setting `application: false`.
 >
+> "Any script on the page" is wider than it sounds: your own widgets, a third-party embed, a browser
+> extension injecting into the page, anything a supply-chain compromise reaches. A destructive tool its
+> author believes is gated behind a dialog is reachable by every one of them, with no dialog. Reported
+> from the field: `clear_done` ran from the in-page console with no prompt, while the identical call
+> over the bridge stopped and waited.
+>
 > So: if you move a domain rule out of your handler and into `available`, you have stopped enforcing it
 > for every caller that is not this agent. Keep the rule in the handler, where it applies to everyone.
 > Use `available` for what your application is *offering* — a step not reachable yet, an invoice
