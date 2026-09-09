@@ -56,6 +56,14 @@
       "exempt": ["docs/releases/"],
       "allow": ["research@thekaliper.com"],
       "why": "a term from the private workflow names something a contributor cannot open; a milestone letter (M0\u2013M8) names the delivery plan, which is not published. A requirement number (FR-016, SC-004) names a clause of a specification that is not published, so it points nowhere for a reader."
+    },
+    {
+      "name": "copyright-owner",
+      "pattern": "Copyright [0-9]{4} (?!A-Launch Inc\\.)",
+      "flags": "u",
+      "exempt": [],
+      "allow": [],
+      "why": "the copyright line names the owner, and LICENSE drifted from NOTICE to an individual \u2014 a third-party notice writes its year differently and is untouched by this"
     }
   ]
 }

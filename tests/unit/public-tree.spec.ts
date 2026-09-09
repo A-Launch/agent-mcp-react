@@ -410,6 +410,24 @@ describe('the string rules', () => {
     expect(result.stdout).not.toContain('docs/ok.md');
   });
 
+  it('copyright-owner: an individual on the line fails, the owner passes, a third party is untouched', () => {
+    // `LICENSE` carried `Copyright 2026 Nikolay Kvasov` in its appendix while `NOTICE` carried the
+    // owner's line — the two disagreed in the published tree, and in the file that ships inside the
+    // package. The ownership record named NOTICE, package.json#author and the README as its
+    // projections; LICENSE was not on that list, which is why it drifted unnoticed.
+    const fx = fixture('public', {
+      LICENSE: '# Terms\n\nCopyright 2026 Someone Else\n',
+      NOTICE: '# Notice\n\nCopyright 2026 A-Launch Inc. Originally written by Nikolay Kvasov.\n',
+      // A third-party notice writes its year differently, and must not be caught.
+      'docs/third-party.md': '# Third party\n\nCopyright © [$year] World Wide Web Consortium.\n',
+    });
+    const result = run(fx.root);
+    expect(verdicts(result.stdout)['copyright-owner']).toBe('FAIL');
+    expect(result.stdout).toContain('LICENSE:3');
+    expect(result.stdout).not.toContain('NOTICE:');
+    expect(result.stdout).not.toContain('docs/third-party.md');
+  });
+
   it('the four files that spell the patterns are exempt from every string rule', () => {
     const fx = fixture('public', {
       'scripts/lib/public-tree.mjs': '// matches /Users/alice and sk-ant-X and § and kaliper\n',
