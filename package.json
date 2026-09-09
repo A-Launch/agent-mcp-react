@@ -1,6 +1,6 @@
 {
   "name": "@agent-mcp/react",
-  "version": "0.2.0-dev.0",
+  "version": "0.2.0",
   "description": "Expose a running React application as an MCP server over an authenticated WebSocket transport \u2014 a second control interface onto one application, not browser automation.",
   "license": "Apache-2.0",
   "author": "Nikolay Kvasov",

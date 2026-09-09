@@ -9,8 +9,12 @@ All notable changes to `@agent-mcp/react` are recorded here. The format follows
 
 ## [Unreleased]
 
-The next release is `0.2.0`, the version the first registry publication carries. Until it lands the
-manifest stays at `0.2.0-dev.0`.
+Nothing yet.
+
+## [0.2.0] — 2026-09-09
+
+The first release published from this repository, and the version its `v0.2.0` tag names. Its notes
+are in [docs/releases/0.2.0.md](docs/releases/0.2.0.md).
 
 ### Added
 
@@ -51,12 +55,13 @@ manifest stays at `0.2.0-dev.0`.
 
 ## [0.1.0] — 2026-08-27
 
-The first release. Its notes are in [docs/releases/0.1.0.md](docs/releases/0.1.0.md).
+The first release, made before this repository existed. Its notes are kept in
+[docs/releases/0.1.0.md](docs/releases/0.1.0.md).
 
-The public `v0.1.0` tag marks where this release was **published**, on a tree that already includes
-the entries listed under *Unreleased* above. The exact tree the release was built from is not in this
-repository's history: the initial public commit is the current tree, so this file carries both the
-`0.1.0` entry and the changes since it.
+**There is no `v0.1.0` tag here, deliberately.** The tree this release was built from is not in this
+repository's history, which begins at the initial public import. A tag of that name could only point
+at a later tree and misdescribe itself, so the entry links its notes instead of a tag.
 
-[Unreleased]: https://github.com/A-Launch/agent-mcp-react/compare/v0.1.0...develop
-[0.1.0]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.1.0
+[Unreleased]: https://github.com/A-Launch/agent-mcp-react/compare/v0.2.0...develop
+[0.2.0]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.0
+[0.1.0]: docs/releases/0.1.0.md
