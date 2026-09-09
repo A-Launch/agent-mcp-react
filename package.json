@@ -1,6 +1,6 @@
 {
   "name": "agent-mcp-react",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Expose a running React application as an MCP server over an authenticated WebSocket transport \u2014 a second control interface onto one application, not browser automation.",
   "keywords": [
     "mcp",
