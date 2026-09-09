@@ -102,9 +102,13 @@ export function Counter() {
       required: ['by'],
       additionalProperties: false,
     },
-    handler: (input) => {
+    handler: async (input, context) => {
       const by = input.by as number;
       setCount((previous) => previous + by);
+      // Wait for React to commit before resolving. Without this the call reports success while the
+      // page still shows the old number — and an agent that reads the state back in the same turn
+      // gets the previous render, which looks exactly like a tool that silently did nothing.
+      await context.afterRender();
       return { added: by };
     },
   });
@@ -117,6 +121,13 @@ export function Counter() {
   );
 }
 ```
+
+**The handler awaits `context.afterRender()` before it returns.** That one line is the difference
+between a call that reports what the page shows and a call that reports what it asked for. Skip it and
+everything still compiles, the tool still works when a person watches it, and the defect appears only
+when something reads the state back quickly — an agent, usually, which then retries a mutation that
+already happened. What it waits for and what it does not:
+[commit and registration](explanation-commit-and-registration.md).
 
 **The handler does not validate `by`.** It does not have to: the schema is enforced in the runtime
 before the handler runs, so a call with a missing or non-numeric `by` is refused and your code never

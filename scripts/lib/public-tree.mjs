@@ -482,9 +482,20 @@ function linkTargets(text) {
   return targets;
 }
 
-function checkLinks(treeReal, path, text, findings, config) {
-  for (const { line, target } of linkTargets(text)) {
-    if (/^[a-z][a-z0-9+.-]*:/i.test(target) || target.startsWith('//')) continue;
+function checkLinks(treeReal, path, text, findings, config, selfPrefixes = []) {
+  for (const { line, target: rawTarget } of linkTargets(text)) {
+    // **An absolute URL back into this repository is checked like a relative one.** The README is
+    // published to two places: relative links work in the repository and are dead on the package page,
+    // so the documentation links are absolute — and an absolute link used to be skipped by the test
+    // below, which would have traded a working link for a lost guard. Sixteen of them were broken on
+    // the registry before anyone looked. Resolving the prefix back to a path keeps both.
+    const selfPrefix = selfPrefixes.find((prefix) => rawTarget.startsWith(prefix));
+    const target = selfPrefix === undefined ? rawTarget : rawTarget.slice(selfPrefix.length);
+    if (
+      selfPrefix === undefined &&
+      (/^[a-z][a-z0-9+.-]*:/i.test(target) || target.startsWith('//'))
+    )
+      continue;
     const hash = target.indexOf('#');
     const rawPath = hash === -1 ? target : target.slice(0, hash);
     const anchor = hash === -1 ? undefined : target.slice(hash + 1);
@@ -562,16 +573,44 @@ export function scanText(text, path, config, onFinding) {
  * checked. `selfExempt` paths skip every string rule because they must spell the patterns; each
  * rule's `exempt` prefixes skip that rule only.
  */
+/**
+ * The absolute-URL prefixes that mean "a path in this very tree".
+ *
+ * Derived from `package.json#repository.url`, which already owns the repository's address — spelling
+ * it in the publish config would be a second owner that drifts. Returns nothing when the manifest is
+ * absent or nameless, and a link rule that checks nothing is the same behaviour as before.
+ */
+function selfLinkPrefixes(treeReal) {
+  let url;
+  try {
+    const manifest = JSON.parse(readFileSync(resolve(treeReal, 'package.json'), 'utf8'));
+    url = typeof manifest.repository === 'string' ? manifest.repository : manifest.repository?.url;
+  } catch {
+    return [];
+  }
+  if (typeof url !== 'string') return [];
+  const match = /github\.com[/:]([^/]+)\/([^/.]+)/.exec(url);
+  if (match === null) return [];
+  const [, owner, repo] = match;
+  // Every shape a document here actually uses: a file view, a raw file, and the raw CDN host.
+  return [
+    `https://github.com/${owner}/${repo}/blob/main/`,
+    `https://github.com/${owner}/${repo}/raw/main/`,
+    `https://raw.githubusercontent.com/${owner}/${repo}/main/`,
+  ];
+}
+
 export function checkTree(tree, config) {
   const treeReal = realpathSync(tree);
   const findings = [];
+  const selfPrefixes = selfLinkPrefixes(treeReal);
   for (const path of walk(treeReal)) {
     const text = readFileSync(resolve(treeReal, path), 'utf8');
     const lines = text.split('\n');
     scanLines(lines, path, config.forbidden, config, (rule, line, excerpt) =>
       findings.push({ rule: rule.name, path, line, excerpt, why: rule.why }),
     );
-    if (/\.md$/i.test(path)) checkLinks(treeReal, path, text, findings, config);
+    if (/\.md$/i.test(path)) checkLinks(treeReal, path, text, findings, config, selfPrefixes);
   }
   return findings;
 }

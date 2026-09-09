@@ -2,8 +2,23 @@
 
 # The bundled validator requires CSP `unsafe-eval`
 
-**Status**: open — documented, not fixed. Recorded 2026-08-28.
+**Status**: open — documented, not fixed. Recorded 2026-08-28; the failure mode restated 2026-09-09
+after a first-time user reported it from the outside.
 **Severity**: high for any application with a strict Content-Security-Policy.
+
+## Check this before any production deploy
+
+**It throws at declaration, so the page exposes no tools — and an agent sees an empty page rather than
+an error.** That is the sentence to remember, because it inverts where you would look. Nothing reports
+a broken integration: `tools/list` is simply empty, exactly as it is for a page that declared nothing,
+and the agent has no way to tell "this application exposes no tools" from "this application's
+validator could not compile". It reports the page as having nothing to offer, and it is not wrong from
+where it stands.
+
+**A local demo will not show you this.** `localhost` with no policy compiles schemas happily, so the
+integration looks complete through development and fails on the first deployment that carries a real
+`script-src`. It is the first thing to check before shipping, and the last thing a green local run
+will tell you about.
 
 ## What happens
 

@@ -115,7 +115,15 @@ export interface AgentMcpProviderProps {
    * built without a destination is one whose alarms default to silence. It is never the agent: a
    * registry-integrity report is the operator's business.
    *
-   * It is NOT where setup failures go. Those throw, so an application cannot log past them.
+   * It is NOT where a refused DECLARATION goes — that is `onRegistration`, which carries every cause
+   * with the code that refused it.
+   *
+   * **A refused declaration no longer throws, and that reverses what this line used to say.** The
+   * argument for throwing was that an application cannot log past it. The argument against won: MCP is
+   * a second control interface onto one application, and a misconfigured second interface must not
+   * take down the first — an author who forgot a validator got a white screen, with the console
+   * message naming the exact import sitting underneath a page that no longer rendered. What has not
+   * changed is that the tool is not registered: refused is still refused, on every route.
    */
   readonly onUnexpectedState: (failure: UnexpectedStateReport) => void;
   /**
@@ -193,10 +201,14 @@ export interface AgentMcpProviderProps {
   /**
    * A declaration this library refused before it ever became a tool.
    *
-   * There is no call to attach this to and never will be: a reserved prefix is refused at DECLARATION,
-   * because by the time a call arrives the name is already held in a registry shared with every script
-   * on the page and there is nothing left to refuse. Without this an author sees a tool silently
-   * missing from `tools/list` with nothing anywhere to explain why.
+   * There is no call to attach this to and never will be: the refusal happens at DECLARATION, because
+   * by the time a call arrives the name is already held in a registry shared with every script on the
+   * page and there is nothing left to refuse. Without this an author sees a tool silently missing from
+   * `tools/list` with nothing anywhere to explain why.
+   *
+   * **Every cause arrives here**, and `code` says which: a missing validator, a duplicate name, a
+   * foreign name, a reserved prefix. A refused declaration never unmounts the application — see
+   * `onUnexpectedState` for what changed and why.
    */
   readonly onRegistration?: (event: McpRegistrationEvent) => void;
   /**

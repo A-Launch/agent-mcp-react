@@ -155,8 +155,11 @@ function createAjvValidator(options?: AjvValidatorOptions): SchemaValidator
 const DIALECT = 'draft-07'
 ```
 
-**A tool that declares a schema with no validator installed is not registered at all** — silently
-absent rather than broken.
+**A tool that declares a schema with no validator installed is not registered at all** — absent rather
+than registered-and-unchecked. It is not silent: the refusal reaches `onRegistration` with
+`MCP_TOOL_VALIDATOR_MISSING`, and a development build names the missing import on the console. **Your
+page keeps rendering**, and every other tool on it stays registered — the refusal is scoped to the
+declaration that earned it.
 
 > **Requires CSP `unsafe-eval`.** Ajv compiles schemas with `new Function`. Under a `script-src` that
 > omits it, compilation throws and **your app exposes no tools**. See

@@ -2,8 +2,8 @@
 
 [![npm](https://img.shields.io/npm/v/agent-mcp-react.svg)](https://www.npmjs.com/package/agent-mcp-react)
 [![gate](https://github.com/A-Launch/agent-mcp-react/actions/workflows/gate.yml/badge.svg?branch=main)](https://github.com/A-Launch/agent-mcp-react/actions/workflows/gate.yml)
-[![license](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![node](https://img.shields.io/badge/node-%3E%3D22-brightgreen.svg)](.nvmrc)
+[![license](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](https://github.com/A-Launch/agent-mcp-react/blob/main/LICENSE)
+[![node](https://img.shields.io/badge/node-%3E%3D22-brightgreen.svg)](https://github.com/A-Launch/agent-mcp-react/blob/main/.nvmrc)
 [![react](https://img.shields.io/badge/react-%3E%3D18-61dafb.svg)](https://react.dev)
 
 **Make your React page an MCP server.**
@@ -17,11 +17,11 @@ customers.set_filters({ health: ["at_risk"], arrMin: 1000000 })
 
 instead of opening filters, finding Health, clicking At risk, then setting a revenue floor by hand.
 
-[![An agent composing a dashboard by calling the tools the page declared](https://raw.githubusercontent.com/A-Launch/agent-mcp-react/main/docs/media/composable-board.gif)](docs/media/composable-board.mp4)
+[![An agent composing a dashboard by calling the tools the page declared](https://raw.githubusercontent.com/A-Launch/agent-mcp-react/main/docs/media/composable-board.gif)](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/media/composable-board.mp4)
 
 *A person describes a dashboard; the agent composes it by calling the tools the page declared, and the
 panels it built are then driven by hand. Twenty seconds of the
-[full three-minute recording](docs/media/composable-board.mp4). The left pane is the agent's real tool
+[full three-minute recording](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/media/composable-board.mp4). The left pane is the agent's real tool
 calls — nothing there is a transcript written for the video.*
 
 The application keeps owning its state. MCP is a **second control interface** onto the same
@@ -54,7 +54,7 @@ shared page registry skip those gates. Keep real authorization in your handlers.
 
 The documented browser matrix is a support target, not fully verified. Three Playwright engines are
 not nine browser-and-version combinations. What has been run, and what has not:
-[docs/browser-support.md](docs/browser-support.md).
+[docs/browser-support.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/browser-support.md).
 
 ## Quickstart — using it in your app
 
@@ -79,12 +79,12 @@ tool is in the browser's own per-document registry, which is exactly where a bro
 looks. Connecting an external agent over a socket is a later step, and your backend owns it.
 
 The same path, at a slower pace and with the reasons:
-**[docs/tutorial-first-tool.md](docs/tutorial-first-tool.md)** — about fifteen minutes.
+**[docs/tutorial-first-tool.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/tutorial-first-tool.md)** — about fifteen minutes.
 
 **Working from a checkout instead?** Pack it and depend on the tarball; a `file:` dependency on the
 *directory* does not work, because `publishConfig` applies when a package is packed and never when a
 directory is linked. Routes and failure modes:
-[docs/consuming-without-publishing.md](docs/consuming-without-publishing.md).
+[docs/consuming-without-publishing.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/consuming-without-publishing.md).
 
 ```bash
 pnpm pack        # → agent-mcp-react-<version>.tgz
@@ -174,24 +174,28 @@ The provider takes `getUrl()` and never a credential.
 |---|---|
 | `capabilities` is **required**, and so is **every member of it** | `{ application: true }` does not compile. Spell `dom` and `evaluate` too. |
 | `onUnexpectedState` is **required** | A registry-integrity alarm has no response to travel back on. |
-| A schema with **no validator** | Registration fails with `MCP_TOOL_VALIDATOR_MISSING` and the provider throws, in every build. The tool is never exposed. |
-| `createAjvValidator` needs CSP `unsafe-eval` | Ajv compiles schemas with `new Function`. See [the defect record](docs/issues/validator-requires-unsafe-eval.md). |
+| A schema with **no validator** | The declaration is refused with `MCP_TOOL_VALIDATOR_MISSING` and the tool is never exposed — but your page keeps rendering. It reaches `onRegistration`, and the development console names the import to add. Other tools on the page are unaffected. [Declaring a tool](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/declaring-a-tool.md). |
+| `createAjvValidator` needs CSP `unsafe-eval` | Under a strict policy it throws at declaration, so the page exposes **no tools at all** and an agent sees an empty page rather than an error. `localhost` has no policy, so a local demo will not show you this — check it before deploying. [The defect record](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/issues/validator-requires-unsafe-eval.md). |
 | A **secure context** is required | `localhost` counts. |
+| A mutating handler must **await `context.afterRender()`** | Otherwise it resolves before React commits, and a state read in the same turn returns the previous render. The agent is told the mutation succeeded and then reads a value that does not include it — which looks exactly like a tool that silently did nothing, so the agent retries. [Commit and registration](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/explanation-commit-and-registration.md). |
+| `confirmation: 'required'` gates **this library's bridge, not the action** | The agent waits for a person; any script, widget or extension on the page calls the same tool with no dialog. It is not authorization. Anything that must never happen without consent belongs **inside the handler**. [Declaring a tool](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/declaring-a-tool.md). |
+| `document.modelContext` is **not there when your component mounts** | The provider adopts the registry asynchronously, in an effect. A sibling or child that reads the registry in its own mount effect finds nothing and, if it only looks once, stays empty forever. [Reading the registry from the page](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/observing-tool-calls.md#reading-the-registry-from-your-own-code). |
+| A page-script call refused for bad arguments is **invisible to your observers** | The registry validates against the declared schema and throws before this library sees the call, so nothing reaches `onToolError` or the call log. Silence there does not mean nobody called. [Observing tool calls](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/observing-tool-calls.md). |
 
 ## Docs
 
 | If you want | Read |
 |-------------|------|
-| **To see it work in fifteen minutes** | **[docs/tutorial-first-tool.md](docs/tutorial-first-tool.md)** |
-| Every public export | [docs/reference-api.md](docs/reference-api.md) |
-| To use it without publishing it | [docs/consuming-without-publishing.md](docs/consuming-without-publishing.md) |
-| To declare a tool | [docs/declaring-a-tool.md](docs/declaring-a-tool.md) |
-| To wire the socket | [docs/connecting-to-an-agent.md](docs/connecting-to-an-agent.md) |
-| To let an agent read state | [docs/exposing-state.md](docs/exposing-state.md) |
-| To bind Redux, Zustand, or a router | [docs/store-adapters.md](docs/store-adapters.md) |
-| The design, condensed | [docs/design.md](docs/design.md) |
-| What changed, and when | [CHANGELOG.md](CHANGELOG.md) |
-| Everything else | [docs/README.md](docs/README.md) |
+| **To see it work in fifteen minutes** | **[docs/tutorial-first-tool.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/tutorial-first-tool.md)** |
+| Every public export | [docs/reference-api.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/reference-api.md) |
+| To use it without publishing it | [docs/consuming-without-publishing.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/consuming-without-publishing.md) |
+| To declare a tool | [docs/declaring-a-tool.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/declaring-a-tool.md) |
+| To wire the socket | [docs/connecting-to-an-agent.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/connecting-to-an-agent.md) |
+| To let an agent read state | [docs/exposing-state.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/exposing-state.md) |
+| To bind Redux, Zustand, or a router | [docs/store-adapters.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/store-adapters.md) |
+| The design, condensed | [docs/design.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/design.md) |
+| What changed, and when | [CHANGELOG.md](https://github.com/A-Launch/agent-mcp-react/blob/main/CHANGELOG.md) |
+| Everything else | [docs/README.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/README.md) |
 
 ## Quickstart — working on the library
 
@@ -218,10 +222,10 @@ pnpm dev:board      # composable board    :45030
 Then open <http://localhost:45010>, and drive it from
 <http://localhost:45020> (`pnpm dev:chat`) or by calling the mock agent's HTTP endpoints directly.
 Ports, environment variables, capability profiles and the test layers:
-[docs/local-development.md](docs/local-development.md).
+[docs/local-development.md](https://github.com/A-Launch/agent-mcp-react/blob/main/docs/local-development.md).
 
 **Before your first pull request**, read sections 2 and 3 of
-[CONTRIBUTING.md](CONTRIBUTING.md) — setup and the gate. The rest can wait until you need it.
+[CONTRIBUTING.md](https://github.com/A-Launch/agent-mcp-react/blob/main/CONTRIBUTING.md) — setup and the gate. The rest can wait until you need it.
 
 ## Health gate
 
@@ -251,17 +255,17 @@ pnpm verify:consumer:runs   # loads an external project's production bundle in a
 
 ## Contributing
 
-Issues and pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) owns every convention here —
+Issues and pull requests are welcome. [CONTRIBUTING.md](https://github.com/A-Launch/agent-mcp-react/blob/main/CONTRIBUTING.md) owns every convention here —
 where code goes, the five invariants that fail silently, what the gate requires of a change, and the
 patterns that are refused outright. Read sections 2 and 3 before your first pull request; they are the
 setup and the gate, and everything else can be read when you need it.
 
-By participating you agree to the [code of conduct](CODE_OF_CONDUCT.md).
+By participating you agree to the [code of conduct](https://github.com/A-Launch/agent-mcp-react/blob/main/CODE_OF_CONDUCT.md).
 
-**Found a security problem?** Do not open an issue. [SECURITY.md](SECURITY.md) says how to report it
+**Found a security problem?** Do not open an issue. [SECURITY.md](https://github.com/A-Launch/agent-mcp-react/blob/main/SECURITY.md) says how to report it
 privately — a reachability hole in this library is reachable on every page that embeds it, from the
 moment the issue is readable.
 
 ## License
 
-Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+Apache-2.0. See [LICENSE](https://github.com/A-Launch/agent-mcp-react/blob/main/LICENSE) and [NOTICE](https://github.com/A-Launch/agent-mcp-react/blob/main/NOTICE).

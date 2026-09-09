@@ -93,7 +93,7 @@ export interface AgentMcpBinding {
    */
   readonly reportRegistrationEvent: (event: {
     readonly name: string;
-    readonly prefix: string;
+    readonly prefix?: string;
     readonly code: string;
   }) => void;
 }

@@ -5,6 +5,7 @@ import { type BrowserConnection, connectClient, startGateway } from 'agent-mcp-m
 import { Component, type ReactNode, useState } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { AgentMcpProvider, useMcpTool } from '../../../src/index.ts';
+import { RUNTIME_FAILURE } from '../../../src/runtime/index.ts';
 import { createAjvValidator } from '../../../src/validation/ajv.ts';
 import { resetResolutionForTests } from '../../../src/webmcp/registry.ts';
 import { APPLICATION_ONLY } from '../../support/capabilities.ts';
@@ -141,13 +142,16 @@ class Boundary extends Component<{ into: unknown[]; children: ReactNode }, { fai
 
 describe('a tool that declares a schema with no validator installed', () => {
   it('is refused loudly at declaration, naming the tool and the fix', async () => {
-    // **In development the refusal is thrown to the AUTHOR**, which is the designed behaviour and the
-    // same shape a duplicate name has: stopped at the moment it can be fixed, rather than discovered
-    // later as a tool an agent cannot see. Production reports instead and leaves the page standing.
+    // **The refusal is REPORTED, and the page keeps working.** It used to be thrown to the author, and
+    // over a real socket that is what this case asserted — until a first integration reported the
+    // consequence as a blank page. A second control interface that is misconfigured must not take down
+    // the first; what it must do is refuse, and say so.
     //
-    // So this case asserts the development contract, and the agent-facing half — that the tool is
-    // absent from `tools/list` — follows from it: a registration that threw never happened.
+    // The agent-facing half is the one that cannot be traded away, and it is asserted here rather than
+    // inferred: the tool is absent from `tools/list`. A registration that was refused never happened,
+    // whatever the page did afterwards.
     const caught: unknown[] = [];
+    const refused: { name: string; code: string }[] = [];
     const listener = await agent();
 
     render(
@@ -157,6 +161,7 @@ describe('a tool that declares a schema with no validator installed', () => {
           connection={{ getUrl: () => Promise.resolve(listener.url()) }}
           server={{ name: 'unvalidated', version: '0' }}
           onUnexpectedState={() => undefined}
+          onRegistration={(event) => refused.push(event)}
         >
           <Screen />
         </AgentMcpProvider>
@@ -164,12 +169,18 @@ describe('a tool that declares a schema with no validator installed', () => {
     );
     await listener.settle();
 
-    expect(caught).toHaveLength(1);
-    const message = (caught[0] as Error).message;
-    expect(message).toContain('panel.set');
-    // The message has to be actionable, not merely correct: an author reading it should not have to
-    // find this feature's specification to learn what to do.
-    expect(message).toContain('agent-mcp-react/validation');
+    // Nothing was torn down.
+    expect(caught).toEqual([]);
+    // Refused, with the code that names the cause and the tool it concerns.
+    expect(refused).toHaveLength(1);
+    expect(refused[0]?.name).toBe('panel.set');
+    expect(refused[0]?.code).toBe(RUNTIME_FAILURE.validatorMissing);
+    // And the agent sees no such tool — the half an author cannot check by looking at a page.
+    //
+    // **The sibling survives, and that is new.** The throw took the whole tree down, so a page with one
+    // unvalidated tool exposed nothing at all; the refusal is now scoped to the declaration that earned
+    // it. One forgotten import costs you that tool, not every tool.
+    expect(await listener.names()).toEqual(['panel.ping']);
   });
 });
 
