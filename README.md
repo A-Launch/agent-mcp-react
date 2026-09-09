@@ -80,7 +80,7 @@ directory is linked. Routes and failure modes:
 [docs/consuming-without-publishing.md](docs/consuming-without-publishing.md).
 
 ```bash
-pnpm pack        # → agent-mcp-react-0.2.1.tgz
+pnpm pack        # → agent-mcp-react-<version>.tgz
 ```
 
 ## Use it
@@ -183,7 +183,7 @@ The provider takes `getUrl()` and never a credential.
 | To let an agent read state | [docs/exposing-state.md](docs/exposing-state.md) |
 | To bind Redux, Zustand, or a router | [docs/store-adapters.md](docs/store-adapters.md) |
 | The design, condensed | [docs/design.md](docs/design.md) |
-| What changed, and when | [CHANGELOG.md](CHANGELOG.md) · [release notes](docs/releases/0.2.1.md) |
+| What changed, and when | [CHANGELOG.md](CHANGELOG.md) |
 | Everything else | [docs/README.md](docs/README.md) |
 
 ## Quickstart — working on the library
