@@ -48,7 +48,7 @@ import { dirname, join, posix, relative, resolve, sep } from 'node:path';
 export const TREE = Object.freeze({ companion: 'companion', public: 'public' });
 
 /**
- * The rules, in report order. The four pattern rules are configured; the others take no pattern and
+ * The rules, in report order. The five pattern rules are configured; the others take no pattern and
  * are always on. `history-*` rules run only under `--history`.
  */
 export const RULES = Object.freeze([
@@ -59,12 +59,19 @@ export const RULES = Object.freeze([
   'credential',
   'citation',
   'vocabulary',
+  'copyright-owner',
   'link',
   'history-path',
   'history-string',
 ]);
 
-const PATTERN_RULES = Object.freeze(['personal-path', 'credential', 'citation', 'vocabulary']);
+const PATTERN_RULES = Object.freeze([
+  'personal-path',
+  'credential',
+  'citation',
+  'vocabulary',
+  'copyright-owner',
+]);
 const HISTORY_RULES = Object.freeze(['personal-path', 'credential']);
 
 const WHY = Object.freeze({
