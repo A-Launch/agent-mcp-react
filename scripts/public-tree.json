@@ -1,0 +1,61 @@
+{
+  "$comment": "The ONE owner of what the public tree is: which paths never leave the companion, which companion files are exported under a public name, which files may spell the patterns below, and which strings must not appear in anything published. Read by scripts/lib/public-tree.mjs for both the publish check (pnpm verify:public) and the sync. `tree` says which repository this checkout is; the export rewrites it to `public` and nothing else.",
+  "tree": "public",
+  "hidden": [
+    "specs/",
+    ".specify/",
+    ".agents/",
+    ".claude/",
+    "MVP-PLAN.md",
+    "system-design/",
+    "scripts/hooks/",
+    "scripts/demo/",
+    "scripts/companion/",
+    "tests/unit/companion-sync.spec.ts"
+  ],
+  "mapped": {
+    ".specify/public/CLAUDE.md": "CLAUDE.md",
+    ".specify/public/AGENTS.md": "AGENTS.md"
+  },
+  "selfExempt": [
+    "scripts/public-tree.json",
+    "scripts/lib/public-tree.mjs",
+    "scripts/verify-public.mjs",
+    "tests/unit/public-tree.spec.ts"
+  ],
+  "placeholders": ["sk-ant-SECRETKEY", "sk-ant-SECRETVALUE", "hunter2-secret"],
+  "forbidden": [
+    {
+      "name": "personal-path",
+      "pattern": "/Users/[A-Za-z]|/home/[a-z]+/|Development/claudecode",
+      "flags": "",
+      "exempt": [],
+      "allow": [],
+      "why": "a path on one person's machine is a path nobody else can follow"
+    },
+    {
+      "name": "credential",
+      "pattern": "sk-ant-|ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|ANTHROPIC_API_KEY=\\S",
+      "flags": "",
+      "exempt": [],
+      "allow": ["ANTHROPIC_API_KEY=\u2026"],
+      "why": "a credential in a public tree is published the moment it is pushed"
+    },
+    {
+      "name": "citation",
+      "pattern": "\u00a7",
+      "flags": "u",
+      "exempt": ["docs/releases/"],
+      "allow": [],
+      "why": "the specification is not published; cite docs/design.md or the owning page, or state the claim in place"
+    },
+    {
+      "name": "vocabulary",
+      "pattern": "speckit|Spec Kit|kaliper|IMMUNE-|constitution|MVP-PLAN|phase-boundary|\\bfeature 0[0-9]{2}\\b|\\b0[0-9]{2}(\u2019|')s\\b|\\bM[0-8]\\b|\\bmilestones?\\b|\\bFR-[0-9]{3}[a-z]?\\b|\\bSC-[0-9]{3}\\b|\\b[a-z]+\\(0[0-9]{2}\\)|\\bT[0-9]{3}[a-z]?\\b",
+      "flags": "iu",
+      "exempt": ["docs/releases/"],
+      "allow": ["research@thekaliper.com"],
+      "why": "a term from the private workflow names something a contributor cannot open; a milestone letter (M0\u2013M8) names the delivery plan, which is not published. A requirement number (FR-016, SC-004) names a clause of a specification that is not published, so it points nowhere for a reader."
+    }
+  ]
+}

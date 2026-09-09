@@ -1,0 +1,64 @@
+name: Bug report
+description: Something the library does that it should not, or does not do that it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A vulnerability — an agent reaching a tool the application did not register, one capability
+        conferring another, a credential or password value reaching an agent, a page script reaching a
+        Level 2 or 3 tool — is NOT an issue. Report it privately per SECURITY.md.
+  - type: textarea
+    id: observed
+    attributes:
+      label: What you observed
+      description: What happened, as concretely as you can. Include the error code if there was one.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: checkboxes
+    id: screen
+    attributes:
+      label: Did the call succeed while the screen was wrong?
+      description: >-
+        This is the characteristic defect of this system — the tool reports success and the page
+        shows something else, or shows it late. It gets its own box because it is the one to look for.
+      options:
+        - label: Yes — the tool reported success and what the page showed disagreed with it.
+        - label: No — the call failed, or the call and the page agreed.
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: >-
+        A repository, or the steps against one of the applications under `examples/` (which one,
+        which capability profile, which tool, which arguments).
+    validations:
+      required: true
+  - type: textarea
+    id: gate
+    attributes:
+      label: Which of the gate's commands you ran, and their result
+      description: >-
+        `pnpm gate` runs the whole gate — name it if you ran it, or name the individual commands
+        (`pnpm test`, `pnpm test:transport`, `pnpm test:integration`, …) and whether each passed.
+        `pnpm test:e2e` and `pnpm verify:consumer:runs` are NOT part of the gate and are run by hand;
+        say so if you ran either.
+      placeholder: |
+        pnpm test — pass
+        pnpm test:integration — 1 failure: …
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version, if relevant
+      placeholder: Firefox 131, Safari 18.1, Chromium 151 with --enable-features=WebMCP
+  - type: input
+    id: version
+    attributes:
+      label: Library version
+      placeholder: 0.2.0-dev.0

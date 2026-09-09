@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# pre-push hook — main is release-only.
+#
+# Blocks DIRECT pushes to `main` on any remote. A release lands through a pull
+# request from `develop`, rebase-merged after the `gate` check is green.
+#
+# The CONTROL is branch protection on the public repository: `main` and `develop`
+# both require a pull request and the `gate` check, with no administrator bypass.
+# This hook is a local courtesy that says so before the server would — it can be
+# bypassed with `git push --no-verify` and only applies to clones that enable
+# core.hooksPath (scripts/setup-git-hooks.sh; docs/local-development.md).
+#
+# git passes one line per ref being pushed on stdin:
+#   <local ref> <local sha> <remote ref> <remote sha>
+
+protected="main"
+blocked=0
+
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  case "$remote_ref" in
+    "refs/heads/$protected")
+      blocked=1
+      ;;
+  esac
+done
+
+if [ "$blocked" -eq 1 ]; then
+  echo "" >&2
+  echo "✗ Direct push to '$protected' is blocked — it is release-only." >&2
+  echo "  Land changes via a pull request (feature branch → develop → PR to main)." >&2
+  echo "  Override (discouraged): git push --no-verify" >&2
+  echo "" >&2
+  exit 1
+fi
+
+exit 0

@@ -1,0 +1,128 @@
+{
+  "name": "@agent-mcp/react",
+  "version": "0.2.0-dev.0",
+  "description": "Expose a running React application as an MCP server over an authenticated WebSocket transport \u2014 a second control interface onto one application, not browser automation.",
+  "license": "Apache-2.0",
+  "author": "Nikolay Kvasov",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/A-Launch/agent-mcp-react.git"
+  },
+  "homepage": "https://github.com/A-Launch/agent-mcp-react#readme",
+  "bugs": "https://github.com/A-Launch/agent-mcp-react/issues",
+  "type": "module",
+  "packageManager": "pnpm@11.8.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./actions": "./src/actions/index.ts",
+    "./validation": "./src/validation/ajv.ts",
+    "./dom": "./src/dom/index.ts",
+    "./evaluate": "./src/evaluate/index.ts",
+    "./devtools": "./src/devtools/index.ts",
+    "./redux": "./src/adapters/redux.ts",
+    "./zustand": "./src/adapters/zustand.ts",
+    "./router": "./src/adapters/router.ts"
+  },
+  "scripts": {
+    "prepare": "pnpm build",
+    "build": "rm -rf dist tsconfig.build.tsbuildinfo && tsc -p tsconfig.build.json",
+    "build:examples": "pnpm -r --filter \"./examples/*\" run build",
+    "typecheck": "tsc --noEmit && pnpm -C examples/customer-dashboard exec tsc --noEmit && pnpm -C examples/agent-chat exec tsc --noEmit && pnpm -C examples/composable-board exec tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "gate": "pnpm build && pnpm build:examples && pnpm test && pnpm typecheck && pnpm lint && pnpm test:transport && pnpm test:integration && pnpm verify:package && pnpm verify:consumer",
+    "test": "vitest run --project unit --project react",
+    "test:transport": "vitest run --project transport",
+    "test:integration": "vitest run --project integration",
+    "test:e2e": "playwright test",
+    "test:e2e:native": "AMR_NATIVE_REGISTRY=1 playwright test --project native-registry",
+    "dev:agent": "pnpm -C tools/mock-agent start",
+    "dev:example": "pnpm -C examples/customer-dashboard dev",
+    "dev:chat": "pnpm -C examples/agent-chat dev",
+    "dev:board": "pnpm -C examples/composable-board dev",
+    "verify:package": "node scripts/verify-package.mjs",
+    "verify:consumer": "node scripts/verify-consumer.mjs",
+    "verify:consumer:runs": "node scripts/verify-consumer-runs.mjs",
+    "verify:public": "node scripts/verify-public.mjs"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@agent-mcp/example-composable-board": "workspace:*",
+    "@agent-mcp/example-customer-dashboard": "workspace:*",
+    "@agent-mcp/mock-agent": "workspace:*",
+    "@biomejs/biome": "^2.0.0",
+    "@playwright/test": "^1.56.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/ws": "^8.18.0",
+    "esbuild": "^0.28.2",
+    "jsdom": "^26.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "6.0.3",
+    "vitest": "^3.2.0",
+    "ws": "^8.18.0"
+  },
+  "dependencies": {
+    "@mcp-b/webmcp-polyfill": "^4.0.0",
+    "@mcp-b/webmcp-types": "^4.0.0",
+    "@modelcontextprotocol/server": "^2.0.0"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "types": "dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./actions": {
+        "types": "./dist/actions/index.d.ts",
+        "default": "./dist/actions/index.js"
+      },
+      "./validation": {
+        "types": "./dist/validation/ajv.d.ts",
+        "default": "./dist/validation/ajv.js"
+      },
+      "./dom": {
+        "types": "./dist/dom/index.d.ts",
+        "default": "./dist/dom/index.js"
+      },
+      "./evaluate": {
+        "types": "./dist/evaluate/index.d.ts",
+        "default": "./dist/evaluate/index.js"
+      },
+      "./devtools": {
+        "types": "./dist/devtools/index.d.ts",
+        "default": "./dist/devtools/index.js"
+      },
+      "./redux": {
+        "types": "./dist/adapters/redux.d.ts",
+        "default": "./dist/adapters/redux.js"
+      },
+      "./zustand": {
+        "types": "./dist/adapters/zustand.d.ts",
+        "default": "./dist/adapters/zustand.js"
+      },
+      "./router": {
+        "types": "./dist/adapters/router.d.ts",
+        "default": "./dist/adapters/router.js"
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+# The health gate, run by the hosting platform on every pull request and on every push to the two
+# long-lived branches. The JOB is named `gate` because that is the check-run context branch protection
+# requires on `develop` and `main`; the workflow's own name is not a check.
+#
+# Deliberately absent: a cache of the pnpm store (verify:consumer installs the tarball into a project
+# outside the tree and must reach the registry — a cache that made its offline branch pass would hide
+# the path CI actually takes), `continue-on-error`, a retry, a matrix. Actions are pinned to a full
+# commit SHA, never a tag, because a tag can be moved.
+name: gate
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # verify:public --history walks every commit reachable from HEAD.
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+      # pnpm, at the exact version package.json#packageManager names.
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm gate
+      - run: pnpm verify:public --history

@@ -1,0 +1,27 @@
+@agent-mcp/react
+Copyright 2026 A-Launch Inc. Originally written by Nikolay Kvasov.
+
+This product is owned by A-Launch Inc. and was originally developed by Nikolay Kvasov.
+
+Licensed under the Apache License, Version 2.0. See LICENSE for the full terms.
+
+---
+
+This package declares the following runtime dependencies, each under its own licence.
+They are not redistributed in this package's published artifact; they are resolved by
+the consumer's package manager.
+
+  @modelcontextprotocol/server   MIT   https://github.com/modelcontextprotocol/typescript-sdk
+  @mcp-b/webmcp-polyfill         MIT   https://github.com/WebMCP-org/npm-packages
+  @mcp-b/webmcp-types            MIT   https://github.com/WebMCP-org/npm-packages
+
+React is a peer dependency (MIT) and is provided by the consuming application.
+
+This repository additionally holds one file that is neither a dependency nor built against:
+
+  tests/conformance/evidence/webmcp-41d12f0.bs
+      A verbatim copy of the WebMCP draft (index.bs) at commit
+      41d12f057167ccf5954dbcf49d99502cb6c84491, held as evidence for the conformance cases.
+      W3C Software and Document License (2023)   https://github.com/webmachinelearning/webmcp
+      The license's full notice, which it requires on every copy, is reproduced beside the file
+      in tests/conformance/evidence/LICENSE.md.

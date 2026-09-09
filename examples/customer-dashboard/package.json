@@ -1,0 +1,23 @@
+{
+  "name": "@agent-mcp/example-customer-dashboard",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The demonstrator this library is proven against: one provider, one tool, one visible change.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@agent-mcp/react": "workspace:*",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.18.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.1.0",
+    "vite": "^8.2.2"
+  }
+}

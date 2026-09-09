@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "noEmit": false,
+    "types": [],
+
+    // **No maps, because the sources they point at are not published.** The base config emits both,
+    // which is right for a repository that typechecks against its own source. In a package it is not:
+    // `files` ships `dist/` and deliberately not `src/`, so every emitted map named `../src/index.ts`
+    // and resolved to nothing — 132 of the tarball's 264 files, all of them dangling.
+    //
+    // A dangling map is worse than an absent one: a debugger follows it, fails, and shows nothing,
+    // which reads as a broken build rather than as a missing file. The alternative considered was
+    // embedding sources into the maps (`sourcesContent`), which would make stepping into this library
+    // work — it is rejected for `0.1.0` because it publishes the source tree by another route, which
+    // is the thing the packaging decision deliberately does not do.
+    "declarationMap": false,
+    "sourceMap": false,
+
+    // **These two are load-bearing, and deleting them restores a package that cannot be built.**
+    //
+    // Every import in `src/` names a `.ts` file, which is correct for the bundler resolution the whole
+    // repository develops against — tests, examples and tooling all resolve that way. On EMIT, `tsc`
+    // refuses those specifiers outright (TS5097), and when it was made to proceed it stripped the
+    // extension and wrote an extensionless specifier that Node's ESM resolver cannot find:
+    //
+    //     Cannot find module '…/dist/page-identity'
+    //
+    // So the build failed and produced output anyway, which is how it stayed unnoticed for twenty
+    // features. `rewriteRelativeImportExtensions` rewrites `.ts` to `.js` on the way out; the other
+    // option is what lets the build read the source at all.
+    //
+    // Scoped to the BUILD config on purpose: nothing else in the repository needs them, and putting
+    // them in the base config would change how every test and example resolves.
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": ["src"],
+  "exclude": ["**/*.spec.ts", "**/*.spec.tsx"]
+}

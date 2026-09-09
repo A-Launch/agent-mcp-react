@@ -1,0 +1,737 @@
+/*
+ * The dashboard's stylesheet. Presentation only — nothing here is part of the library, and nothing
+ * here is required to integrate it.
+ *
+ * Two visual decisions carry meaning rather than taste, and both exist so a screenshot is evidence:
+ *   - The activity log tints an agent's entries differently from a person's, so an interleaved
+ *     session is readable at a glance.
+ *   - Health is a colour AND a word, never colour alone, because a screenshot of this page is read
+ *     by people who cannot rely on hue.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --ink: #12151c;
+  --ink-soft: #59606e;
+  /* **Darkened from #8b93a3, which measured 3.09:1 on white.** This token carries the small text —
+     field labels, statistics, table headers, empty states, drawer metadata, timestamps, and the 11.5px
+     account sub-line — so it was a systemic AA failure rather than one selector. Chosen against the
+     WORST pairing it appears on (plain white), which also clears the ground. */
+  --ink-faint: #667085;
+  --ground: #f4f5f8;
+  --panel: #ffffff;
+  --line: #dfe3ea;
+  --line-strong: #c6ccd8;
+
+  --accent: #2c55c8;
+  --accent-soft: #e7ecfb;
+  /* Text ON the accent. It has to flip with the scheme because the accent itself does: a mid blue in
+     light, a LIGHT blue in dark, so one fixed foreground fails one of them. */
+  --on-accent: #ffffff;
+  --agent: #7a3ea8;
+  --agent-soft: #f1e8f8;
+
+  --healthy: #1c7a4f;
+  --watch: #8a6a10;
+  --at-risk: #a8501b;
+  --churning: #a32020;
+
+  --radius: 8px;
+  --gap: 16px;
+  --mono: "SFMono-Regular", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e8ebf2;
+    --ink-soft: #a2abbd;
+    /* Lightened from #6f7889, which measured 3.88:1 on the dark panel. */
+    --ink-faint: #8b93a3;
+    --ground: #101319;
+    --panel: #171b23;
+    --line: #262c38;
+    --line-strong: #39414f;
+    --accent: #7d9bf5;
+    --accent-soft: #1c2740;
+    --on-accent: #101319;
+    --agent: #c39bea;
+    --agent-soft: #2a1f3a;
+    --healthy: #55c68e;
+    --watch: #d6ac3f;
+    --at-risk: #e08a4e;
+    --churning: #ef6d6d;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font:
+    14px / 1.5 -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+  padding: 14px 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.app-head h1 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+.muted {
+  margin: 2px 0 0;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+}
+
+.connection {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+}
+.connection .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+}
+.connection-connected .dot {
+  background: var(--healthy);
+}
+.connection-connecting .dot {
+  background: var(--watch);
+}
+.connection-error .dot {
+  background: var(--churning);
+}
+
+.app-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 320px;
+  gap: var(--gap);
+  padding: var(--gap);
+  align-items: start;
+}
+@media (max-width: 1100px) {
+  .app-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.center {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  min-width: 0;
+}
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.rail,
+.views,
+.activity,
+.drawer,
+.summary,
+.table-wrap {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.rail,
+.views,
+.activity,
+.drawer {
+  padding: 14px;
+}
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.rail-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.rail-head h2,
+.views h3,
+.activity h3 {
+  margin: 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-soft);
+}
+.rail-foot {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: var(--mono);
+}
+
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 12.5px;
+}
+.link-button:disabled {
+  color: var(--ink-faint);
+  cursor: default;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field-label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+.field-row {
+  display: flex;
+  gap: 10px;
+}
+.field-inline {
+  flex: 1;
+}
+.field-toggle {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.text-input,
+.number-input {
+  width: 100%;
+  padding: 6px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--ground);
+  color: var(--ink);
+}
+.number-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.suffix {
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12.5px;
+}
+.chip-on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 22px;
+  padding: 13px 16px;
+}
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+}
+.stat-value {
+  font-size: 19px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.stat-label {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+.summary-health {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+.summary-sort {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  width: 100%;
+}
+
+.pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  border: 1px solid currentColor;
+}
+.pill-healthy {
+  color: var(--healthy);
+}
+.pill-watch {
+  color: var(--watch);
+}
+.pill-at_risk {
+  color: var(--at-risk);
+}
+.pill-churning {
+  color: var(--churning);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.table th {
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  padding: 0;
+  background: var(--panel);
+  position: sticky;
+  top: 0;
+}
+.table th button {
+  width: 100%;
+  text-align: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 9px 12px;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+.table th.sorted button {
+  color: var(--accent);
+}
+.caret {
+  margin-left: 5px;
+  font-size: 9px;
+}
+.table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.table .num {
+  text-align: right;
+}
+.table .overdue {
+  color: var(--churning);
+}
+.row {
+  cursor: pointer;
+}
+.row:hover td {
+  background: var(--accent-soft);
+}
+.row.selected td {
+  background: var(--accent-soft);
+}
+/* The name column sets its own floor so an account like "Northwind Labs" is one line, not two — a
+   wrapped name reads as two rows at a glance, which is the wrong thing to see in a table. */
+.table td:first-child,
+.table th:first-child {
+  min-width: 200px;
+}
+.row-name {
+  display: block;
+  font-weight: 550;
+}
+.row-sub {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+.empty {
+  text-align: center;
+  color: var(--ink-faint);
+  padding: 28px;
+}
+
+.drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.drawer-empty {
+  color: var(--ink-soft);
+}
+.drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.drawer-head h2 {
+  margin: 0;
+  font-size: 15px;
+}
+.drawer-sub {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+.drawer-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin: 0;
+}
+.drawer-facts dt {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+.drawer-facts dd {
+  margin: 1px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.notes {
+  margin: 0;
+  padding-left: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12.5px;
+}
+.note-compose {
+  display: flex;
+  gap: 7px;
+}
+.note-compose button {
+  padding: 6px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--ground);
+  cursor: pointer;
+}
+.note-compose button:disabled {
+  color: var(--ink-faint);
+  cursor: default;
+}
+
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.activity-item {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: baseline;
+  padding: 5px 7px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+.activity-actor {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.actor-agent {
+  background: var(--agent-soft);
+}
+.actor-agent .activity-actor {
+  color: var(--agent);
+}
+.actor-person .activity-actor {
+  color: var(--ink-faint);
+}
+.activity-summary {
+  overflow-wrap: anywhere;
+}
+.activity-time {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-faint);
+}
+
+/* The confirmation surface. A real dialog, because it is the one an embedder copies. */
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(12 16 24 / 62%);
+  z-index: 50;
+}
+
+/* The backdrop as a control, so clicking away refuses rather than doing nothing. */
+.confirm-dismiss {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.confirm {
+  position: relative;
+  max-width: 34rem;
+  padding: 1.5rem 1.75rem;
+  border-radius: 12px;
+  /* **`--panel`, and this line used to read `var(--surface, #fff)`.** No `--surface` token has ever
+     existed in this stylesheet, so the fallback was what always applied: a white panel, in dark mode
+     too, under text that had switched to the dark palette. Measured at 1.19:1 — the confirmation
+     dialog, which is the human-in-the-loop gate for an agent mutation, was effectively invisible to
+     half the people it protects. A fallback that renders is worse than a missing value that does not:
+     it looks like a decision somebody made. */
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 60px rgb(12 16 24 / 35%);
+}
+
+.confirm h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.15rem;
+}
+
+.confirm-tool {
+  margin: 0.75rem 0 0;
+}
+
+.confirm-args {
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.4rem 1rem;
+  grid-template-columns: max-content 1fr;
+}
+
+.confirm-args > div {
+  display: contents;
+}
+
+.confirm-args dt {
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+.confirm-args dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+/* Both answers are real buttons, and they had NO rule of their own until now — `.primary` was a class
+   name with nothing behind it, so approve and refuse rendered identically. At a gate where one choice
+   lets an agent write and the other does not, two controls that look the same is a defect. */
+.confirm-actions button {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.confirm-actions button:hover {
+  border-color: var(--ink-faint);
+}
+
+.confirm-actions .primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  /* **Corrected by measuring.** This first read `color: #ffffff` with a comment claiming `--accent`
+     was a mid blue in both schemes. It is not: dark mode's accent is a LIGHT blue, so white-on-accent
+     measured 2.67:1 — a fail, on the approve button of the confirmation gate. `--on-accent` flips with
+     the scheme. */
+  color: var(--on-accent);
+}
+
+.confirm-actions .primary:hover {
+  filter: brightness(1.08);
+}
+
+/* ── The MCP inspector dock ────────────────────────────────────────────────────────────────────────
+   Developer chrome, docked out of the layout rather than sitting in it.
+
+   This panel used to render as an ordinary block between the header and the application, which put
+   roughly 300px of raw developer output above the product on every load — and, at phone widths, an
+   entire screenful of it before anything the page is actually for. Docking it is the fix: it stays
+   available, and it stops deciding how much of the page the product gets.
+
+   Only POSITION is set here. What the panel looks like belongs to the library, which renders it into
+   its own shadow root with its own stylesheet — so nothing in this file can reach inside it, and
+   nothing inside it leaks out here. That is what keeps it legible in an application whose CSS is
+   broken, which is when a developer opens it. */
+.mcp-dock {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 40;
+  width: min(360px, calc(100vw - 32px));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.mcp-dock-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink-soft);
+  box-shadow: 0 6px 20px rgb(16 19 25 / 12%);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  /* Aligned to the right edge of the dock rather than stretched: a full-width pill for two words
+     reads as a banner, and this is a control. */
+  align-self: flex-end;
+}
+
+.mcp-dock-toggle:hover {
+  color: var(--ink);
+  border-color: var(--ink-faint);
+}
+
+.mcp-dock .mcp-inspector-host {
+  /* The panel casts the shadow; the library sizes and colours everything within it. */
+  box-shadow: 0 10px 30px rgb(16 19 25 / 18%);
+  border-radius: 10px;
+}
+
+/* On a narrow screen the dock spans the width it is given and gives the panel less height, so it
+   stays a panel rather than becoming the page. */
+@media (max-width: 640px) {
+  .mcp-dock {
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+    width: auto;
+  }
+}
+
+/* The account name as a real control.
+   The row still responds to a click, but the button is what a keyboard reaches — a `<tr>` has no tab
+   stop and no Enter handling, so before this the drawer was reachable by mouse and by the AGENT, and
+   not by a person using a keyboard. It inherits the cell's typography so the table reads unchanged. */
+.row-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* The row already carries the selected background; the control marks itself for assistive technology
+   through `aria-current` rather than repeating the colour. */
+.row-open[aria-current] .row-name {
+  color: var(--accent);
+}
+
+/* Available to assistive technology, absent from the layout.
+   Clip-based rather than `display: none` or `visibility: hidden`, both of which remove the element
+   from the accessibility tree — which would make a live region announce nothing at all, silently. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

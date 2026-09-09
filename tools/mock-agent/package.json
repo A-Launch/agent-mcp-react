@@ -1,0 +1,24 @@
+{
+  "name": "@agent-mcp/mock-agent",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Local stand-in for an agent runtime: MCP client, WebSocket gateway and dev ticket minter.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=../../.env --env-file-if-exists=../../dev.env --experimental-strip-types src/server.ts",
+    "tabs": "node --experimental-strip-types src/cli.ts tabs",
+    "tools": "node --experimental-strip-types src/cli.ts tools",
+    "call": "node --experimental-strip-types src/cli.ts call"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "^2.0.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/ws": "^8.18.0"
+  }
+}

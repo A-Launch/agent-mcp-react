@@ -1,0 +1,22 @@
+{
+  "name": "@agent-mcp/example-composable-board",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A board whose layout is the shared surface: a person describes a dashboard and panels appear, and the same panels can be added, configured and removed with the mouse.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@agent-mcp/react": "workspace:*",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.1.0",
+    "vite": "^8.2.2"
+  }
+}

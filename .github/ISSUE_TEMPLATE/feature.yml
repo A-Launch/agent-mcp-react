@@ -1,0 +1,44 @@
+name: Feature request
+description: Something an agent should be able to do through an application that embeds this library.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: intent
+    attributes:
+      label: The user or business intent
+      description: >-
+        What a person wants to achieve — `invoice.mark_paid`, "narrow the customer list to accounts
+        at risk" — rather than the tool or mechanism you have in mind. Tools express intent; a
+        generic mutation tool is declined.
+    validations:
+      required: true
+  - type: dropdown
+    id: level
+    attributes:
+      label: Which level of control it needs
+      description: >-
+        Level 1 calls the application's own actions and is preferred. Level 2 is semantic DOM control,
+        a fallback for flows nobody instrumented. Level 3 is JavaScript execution, privileged and off
+        by default. A DOM tool for a flow that already has an application tool is a regression.
+      options:
+        - Level 1 — application control
+        - Level 2 — semantic DOM control
+        - Level 3 — JavaScript execution
+        - Not a tool — the provider, the transport, the docs, the tooling
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why the existing surface does not cover it
+      description: Which hook, adapter or tool you tried, and where it stopped short.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: >-
+            I have read the non-goals and the deliberately-absent table in
+            [CONTRIBUTING.md#scope](../blob/develop/CONTRIBUTING.md#11-scope) and this request is not
+            one of them.
+          required: true

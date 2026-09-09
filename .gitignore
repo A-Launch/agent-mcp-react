@@ -1,0 +1,40 @@
+.DS_Store
+
+# Agent-local state under `.agents/` is never committed; the skills directory is.
+.agents/*
+!.agents/skills/
+!.agents/skills/**
+
+# Node
+node_modules/
+dist/
+.turbo/
+*.tsbuildinfo
+coverage/
+
+# Env — ignore ALL env files except the committed *.example templates.
+# `*.env` as well as `.env*`: the dotted spellings alone let a file named `dev.env` or `local.env`
+# sit in the tree fully tracked, which is the one env-file mistake that is invisible until the key
+# is already pushed. The rule that matters is "no env file is committable unless it is a template".
+.env
+.env.*
+*.env
+!.env.example
+!**/.env.example
+
+# Logs / agent scratch
+*.log
+.context/
+.pnpm-store/
+tmp/
+
+# Playwright / browser test artifacts
+playwright-report/
+test-results/
+.playwright-mcp/
+
+# Session memory written by local agent plugins — never part of the repo.
+.remember/
+
+# Demo recordings — an artifact of scripts/demo, never part of the repo.
+.demo/

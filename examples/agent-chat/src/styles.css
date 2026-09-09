@@ -1,0 +1,468 @@
+/*
+ * The chat page's stylesheet. Presentation only.
+ *
+ * It shares the dashboard's palette on purpose — the two pages are one demonstration seen from two
+ * sides, and the agent's accent here is the same violet the dashboard tints an agent's activity
+ * entries with. A tool call carries its state as a word as well as a colour: "refused" has to read as
+ * refused in a screenshot, not merely look red.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --ink: #12151c;
+  --ink-soft: #59606e;
+  --ink-faint: #8b93a3;
+  --ground: #f4f5f8;
+  --panel: #ffffff;
+  --line: #dfe3ea;
+  --line-strong: #c6ccd8;
+
+  --accent: #2c55c8;
+  --accent-soft: #e7ecfb;
+  --agent: #7a3ea8;
+  --agent-soft: #f1e8f8;
+  --ok: #1c7a4f;
+  --bad: #a32020;
+  --warn: #8a6a10;
+
+  --radius: 8px;
+  --mono: "SFMono-Regular", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e8ebf2;
+    --ink-soft: #a2abbd;
+    --ink-faint: #6f7889;
+    --ground: #101319;
+    --panel: #171b23;
+    --line: #262c38;
+    --line-strong: #39414f;
+    --accent: #7d9bf5;
+    --accent-soft: #1c2740;
+    --agent: #c39bea;
+    --agent-soft: #2a1f3a;
+    --ok: #55c68e;
+    --bad: #ef6d6d;
+    --warn: #d6ac3f;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font:
+    14px / 1.55 -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+a {
+  color: var(--accent);
+}
+code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.page-head h1 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+.hint {
+  margin: 2px 0 0;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+}
+
+.badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-family: var(--mono);
+  border: 1px solid var(--line-strong);
+  color: var(--ink-soft);
+}
+.badge-ok {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+.badge-off {
+  border-color: var(--line-strong);
+  color: var(--ink-faint);
+}
+
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 12.5px;
+}
+.link-button:disabled {
+  color: var(--ink-faint);
+  cursor: default;
+}
+
+.banner {
+  margin: 0;
+  padding: 10px 20px;
+  font-size: 13px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+.banner-bad {
+  background: transparent;
+  color: var(--bad);
+  border-bottom: 1px solid var(--line);
+}
+
+.page-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 16px;
+  padding: 16px;
+  align-items: stretch;
+  min-height: 0;
+}
+@media (max-width: 1000px) {
+  .page-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.chat,
+.console {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.chat {
+  overflow: hidden;
+}
+.scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.empty-state {
+  max-width: 46ch;
+  margin: 40px auto;
+  text-align: center;
+  color: var(--ink-soft);
+}
+.empty-state h2 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.transcript {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.turn {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+}
+.who {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+.turn-agent .who {
+  color: var(--agent);
+}
+.turn-failure .who {
+  color: var(--bad);
+}
+/* The base rule comes first so the qualified one below actually wins the cascade. */
+.said {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.turn-failure .said {
+  color: var(--bad);
+}
+
+.turn-status {
+  grid-template-columns: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-faint);
+  font-size: 12.5px;
+  font-family: var(--mono);
+}
+.spinner {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong);
+  border-top-color: var(--agent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+.turn-call {
+  grid-template-columns: minmax(0, 1fr);
+}
+.call {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--agent);
+  border-radius: 6px;
+  padding: 9px 11px;
+  background: var(--ground);
+}
+.call-refused {
+  border-left-color: var(--bad);
+}
+.call-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.call-name {
+  color: var(--agent);
+  font-weight: 600;
+}
+.call-state {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.state-ok {
+  color: var(--ok);
+}
+.state-refused {
+  color: var(--bad);
+}
+.state-running {
+  color: var(--warn);
+}
+/* `overflow-wrap: anywhere` as well as the scroll container: a tool result is one long JSON line, and
+   without it the line is clipped at the card edge and reads as truncated data rather than as something
+   to scroll. The point of these cards is that nothing is hidden. */
+.call-args,
+.call-result {
+  margin: 7px 0 0;
+  padding: 7px 9px;
+  border-radius: 5px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.call-result.bad {
+  color: var(--bad);
+}
+.call-waiting {
+  margin: 7px 0 0;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 0 16px 12px;
+}
+.suggestion {
+  padding: 5px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12.5px;
+  text-align: left;
+}
+.suggestion:hover:enabled {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.suggestion:disabled {
+  color: var(--ink-faint);
+  cursor: default;
+}
+
+.composer {
+  display: flex;
+  gap: 9px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+}
+.composer input {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--ground);
+}
+.composer button,
+.call-button {
+  padding: 9px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 7px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+.composer button:disabled,
+.call-button:disabled {
+  background: var(--ground);
+  color: var(--ink-faint);
+  border-color: var(--line-strong);
+  cursor: default;
+}
+
+.console {
+  padding: 14px;
+  gap: 11px;
+  overflow-y: auto;
+}
+.console-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.console-head h2 {
+  margin: 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-soft);
+}
+.console-error {
+  margin: 0;
+  color: var(--bad);
+  font-size: 12.5px;
+}
+
+.tool-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.tool {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.tool-open {
+  border-color: var(--accent);
+}
+.tool-head {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tool-title {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+.tool-body {
+  padding: 0 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tool-desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.args {
+  width: 100%;
+  padding: 8px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  background: var(--ground);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  resize: vertical;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

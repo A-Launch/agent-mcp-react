@@ -1,0 +1,11 @@
+# The library itself is the repository root package (src/ at the root, not a workspace member).
+# Only demonstrators and tooling are separate workspace packages.
+packages:
+  - 'examples/*'
+  - 'tools/*'
+
+# Install scripts are blocked by default and each exception is listed here explicitly.
+# esbuild ships a platform binary and its postinstall is what puts it in place; Vitest's transform
+# pipeline cannot run without it. This is the only dependency granted that permission.
+allowBuilds:
+  esbuild: true

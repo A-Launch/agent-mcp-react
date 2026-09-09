@@ -1,0 +1,727 @@
+/*
+ * The board demonstrator's stylesheet: a two-pane shell with the chat on the left and the board on the
+ * right, plus the panel chrome the four kinds render inside.
+ *
+ * **Every custom property this file USES is also DEFINED here.** That is a rule rather than a habit: a
+ * `var(--x)` with no definition falls back silently, and in this repository's other demonstrator exactly
+ * that left the confirmation dialog's panel painting white under a dark theme while its text stayed
+ * near-white — 1.19:1, on the surface that gates agent mutations. An undefined token is invisible to
+ * the compiler, to the linter and to every test; the only defence is not writing one.
+ *
+ * **And every class this file TARGETS is one a component actually RENDERS.** The same failure with a
+ * different spelling: the confirmation dialog's rules were written for `.confirm-panel`, which no
+ * component has ever rendered, so the panel that gates every agent mutation drew with no background
+ * at all. A selector that matches nothing is as silent as an undefined token — neither the compiler,
+ * the linter nor a test id sees it.
+ *
+ * Both themes are defined at the token level. The bare `:root` block carries the complete light
+ * palette; the dark block redefines only tokens, never a component rule, so a component cannot end up
+ * with a colour that exists in one theme and not the other.
+ */
+
+:root {
+  --ink: #16181d;
+  --ink-soft: #5a616e;
+  --ink-faint: #868d9b;
+  --ground: #f6f7f9;
+  --surface: #ffffff;
+  --surface-sunken: #eef0f4;
+  --line: #d9dde4;
+  --line-soft: #e8ebf0;
+  --accent: #2f5fd0;
+  --accent-ink: #ffffff;
+  --accent-soft: #e6ecfb;
+  --danger: #b4232c;
+  --good: #1d7a4c;
+  --warn: #9a6410;
+  --shadow: 0 1px 2px rgb(22 24 29 / 8%), 0 4px 12px rgb(22 24 29 / 6%);
+  --map-sea: #dce6f4;
+  --map-land: #f8f9fb;
+  --radius: 8px;
+  --radius-sm: 5px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e7e9ee;
+    --ink-soft: #a2a9b8;
+    --ink-faint: #767d8c;
+    --ground: #14161a;
+    --surface: #1c1f25;
+    --surface-sunken: #24282f;
+    --line: #333944;
+    --line-soft: #282d35;
+    --accent: #7ba1f0;
+    --accent-ink: #10131a;
+    --accent-soft: #232c40;
+    --danger: #f08b91;
+    --good: #6cc79a;
+    --warn: #d8ad63;
+    --map-sea: #141b26;
+    --map-land: #262c36;
+    --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 12px rgb(0 0 0 / 30%);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--ground);
+}
+
+/* ---- the two-pane shell ------------------------------------------------- */
+
+.shell {
+  display: grid;
+  grid-template-columns: minmax(320px, 400px) 1fr;
+  gap: 0;
+  height: 100vh;
+}
+
+@media (width < 900px) {
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 45vh 1fr;
+    height: auto;
+  }
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pane-chat {
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+}
+
+.pane-board {
+  background: var(--ground);
+}
+
+.pane-head {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.pane-head h1,
+.pane-head h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.pane-body {
+  flex: 1;
+  min-height: 0;
+  padding: 16px;
+  overflow: auto;
+}
+
+/* ---- connection indicator ---------------------------------------------- */
+
+.connection {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.connection .dot {
+  width: 8px;
+  height: 8px;
+  background: var(--ink-faint);
+  border-radius: 50%;
+}
+
+.connection-ready .dot {
+  background: var(--good);
+}
+
+.connection-connecting .dot,
+.connection-reconnecting .dot {
+  background: var(--warn);
+}
+
+.connection-error .dot {
+  background: var(--danger);
+}
+
+/* ---- chat --------------------------------------------------------------- */
+
+.transcript {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding: 16px;
+  overflow: auto;
+}
+
+.turn {
+  padding: 8px 11px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+}
+
+.turn-person {
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-color: var(--accent);
+  align-self: flex-end;
+  max-width: 85%;
+}
+
+.turn-agent {
+  background: var(--surface-sunken);
+}
+
+.turn-status {
+  color: var(--ink-soft);
+  background: none;
+  border: none;
+  padding: 0 2px;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.turn-error {
+  color: var(--danger);
+  background: none;
+  border: 1px solid var(--danger);
+}
+
+/*
+ * The agent's tool calls, shown so a panel appearing on screen is attributable to something a person
+ * can point at. The panel id is what makes it attributable, which is why it is rendered rather
+ * than summarized away.
+ */
+.tool-call {
+  padding: 6px 9px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: none;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+}
+
+.tool-call-failed {
+  color: var(--danger);
+  border-color: var(--danger);
+  border-style: solid;
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.composer input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+/* ---- controls ----------------------------------------------------------- */
+
+button {
+  padding: 6px 11px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+button:disabled {
+  color: var(--ink-faint);
+  cursor: not-allowed;
+}
+
+button.primary {
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+select,
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+/* ---- the toolbar -------------------------------------------------------- */
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.toolbar .spacer {
+  flex: 1;
+}
+
+.toolbar .count {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- panels ------------------------------------------------------------- */
+
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.board-empty {
+  padding: 32px;
+  color: var(--ink-soft);
+  text-align: center;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--surface-sunken);
+}
+
+.panel-head h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.panel-id {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  padding: 1px 5px;
+  background: var(--ground);
+  border: 1px solid var(--line-soft);
+  border-radius: 3px;
+}
+
+.panel-body {
+  padding: 12px;
+  overflow-x: auto;
+}
+
+/* ---- table panel -------------------------------------------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+  padding: 5px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--line-soft);
+  white-space: nowrap;
+}
+
+th {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+td.numeric,
+th.numeric {
+  text-align: right;
+}
+
+/* ---- metric panel ------------------------------------------------------- */
+
+.metric-value {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-caption {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* ---- chart panel -------------------------------------------------------- */
+
+.chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.chart .bar {
+  fill: var(--accent);
+}
+
+.chart .line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.chart .grid {
+  stroke: var(--line-soft);
+  stroke-width: 1;
+}
+
+.chart .label {
+  font-size: 10px;
+  fill: var(--ink-soft);
+}
+
+/* ---- map panel ----------------------------------------------------------
+ *
+ * Every colour is a token, including the two this panel introduced: an undefined `var()` falls back
+ * silently, and a map whose land and sea resolve to the same nothing reads as an empty panel.
+ */
+
+.map svg,
+.timeline svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Sea and land are their own tokens, and they were: the first version painted land in `--line-soft`
+   on a `--surface-sunken` sea — two greys four hex digits apart, which rendered a world map nobody
+   could see the continents in. Measured by looking at it. */
+.map .sea {
+  fill: var(--map-sea);
+}
+
+.map .land {
+  fill: var(--map-land);
+  stroke: var(--line);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+}
+
+/* Internal country borders, lighter than a coastline: the eye should read the landmass first. */
+.map .border {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 0.5;
+  stroke-opacity: 0.85;
+}
+
+/* Meridians and parallels, under the land. Faint enough to read as a projection rather than a grid. */
+.map .graticule {
+  stroke: var(--line);
+  stroke-width: 0.5;
+  stroke-opacity: 0.5;
+}
+
+.map .marker {
+  fill: var(--accent);
+  fill-opacity: 0.55;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+/* A halo, because markers cluster: London, Berlin and Stockholm overlap at world zoom and their
+   labels would otherwise cross each other's strokes into mush. `paint-order` puts the stroke behind
+   the glyph rather than over it. */
+.map .label {
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--ink);
+  stroke: var(--map-sea);
+  stroke-width: 3;
+  paint-order: stroke;
+}
+
+/* ---- timeline panel ----------------------------------------------------- */
+
+.timeline .grid {
+  stroke: var(--line-soft);
+  stroke-width: 1;
+}
+
+.timeline .label {
+  font-family: var(--mono);
+  font-size: 10px;
+  fill: var(--ink-soft);
+}
+
+/* One colour per event kind, and each one is a token that exists in BOTH themes. A kind added to the
+   vocabulary without a rule here renders in the default fill, which is legible rather than invisible. */
+.timeline .event {
+  fill: var(--accent);
+}
+
+.timeline .event-upgrade {
+  fill: var(--good);
+}
+
+.timeline .event-downgrade,
+.timeline .event-ticket {
+  fill: var(--warn);
+}
+
+.timeline .event-churn {
+  fill: var(--danger);
+}
+
+/* ---- pipeline panel ----------------------------------------------------- */
+
+.lanes {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.lane {
+  flex: 1 1 0;
+  min-width: 150px;
+  padding: 8px;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+}
+
+.lane-head {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.card .row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card button {
+  padding: 1px 7px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* ---- form panel --------------------------------------------------------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 10px;
+}
+
+.field label {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.field .secret-note {
+  font-size: 11px;
+  color: var(--warn);
+}
+
+/* ---- confirmation dialog ------------------------------------------------
+ *
+ * The surface a person answers before an agent mutation runs, so it is chrome only in the sense that
+ * nothing here decides anything — what it looks like is load-bearing, because an unreadable question
+ * is one that gets answered without being read.
+ *
+ * **Every selector below names a class the component actually renders.** This block used to target
+ * `.confirm-panel`, which `ConfirmationDialog.tsx` has never rendered: the dialog's panel had no
+ * background, no width and no border, so its heading and arguments painted straight onto the board
+ * behind it, and `.confirm-dismiss` — a full-bleed refuse-on-click button — rendered as a stray empty
+ * button in the middle of the screen. Nothing caught it: the cases assert on test ids and button
+ * text, both of which were correct throughout, and CSS that matches nothing is invisible to the
+ * compiler and to the linter alike. It was found by watching a recording of the page.
+ */
+
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(12 16 24 / 62%);
+  z-index: 10;
+}
+
+/* The backdrop AS a control: clicking away refuses, rather than doing nothing and leaving the agent
+   parked. Full-bleed and transparent, and it must stay behind the panel — `.confirm` is positioned so
+   that it wins the stacking order without either needing a z-index of its own. */
+.confirm-dismiss {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.confirm {
+  position: relative;
+  width: min(460px, calc(100vw - 32px));
+  padding: 20px 22px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 60px rgb(12 16 24 / 35%);
+}
+
+.confirm h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.confirm .muted {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.confirm-tool {
+  margin: 12px 0 0;
+  color: var(--ink-soft);
+}
+
+.confirm-tool code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+}
+
+/* The arguments the agent asked to run with, as a two-column list. A person approving a mutation is
+   approving these values and not merely the verb, so they are shown in full rather than summarised. */
+.confirm-args {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 5px 14px;
+  margin: 14px 0 0;
+  padding: 12px;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+}
+
+.confirm-args > div {
+  display: contents;
+}
+
+.confirm-args dt {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.confirm-args dd {
+  margin: 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+/* Visible to a screen reader, not on screen. The chat input has a visible placeholder but no visible
+   label, and a placeholder is not a label. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
