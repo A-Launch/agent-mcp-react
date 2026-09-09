@@ -45,17 +45,17 @@
       "name": "citation",
       "pattern": "\u00a7",
       "flags": "u",
-      "exempt": ["docs/releases/"],
+      "exempt": ["docs/releases/", "docs/media/"],
       "allow": [],
-      "why": "the specification is not published; cite docs/design.md or the owning page, or state the claim in place"
+      "why": "a section mark cites a document nobody outside can read; docs/media/ is exempt because compressed video decodes to stray section marks by chance and a rule that reports noise is a rule people learn to ignore"
     },
     {
       "name": "vocabulary",
       "pattern": "speckit|Spec Kit|kaliper|IMMUNE-|constitution|MVP-PLAN|phase-boundary|\\bfeature 0[0-9]{2}\\b|\\b0[0-9]{2}(\u2019|')s\\b|\\bM[0-8]\\b|\\bmilestones?\\b|\\bFR-[0-9]{3}[a-z]?\\b|\\bSC-[0-9]{3}\\b|\\b[a-z]+\\(0[0-9]{2}\\)|\\bT[0-9]{3}[a-z]?\\b",
       "flags": "iu",
-      "exempt": ["docs/releases/"],
+      "exempt": ["docs/releases/", "docs/media/"],
       "allow": ["research@thekaliper.com"],
-      "why": "a term from the private workflow names something a contributor cannot open; a milestone letter (M0\u2013M8) names the delivery plan, which is not published. A requirement number (FR-016, SC-004) names a clause of a specification that is not published, so it points nowhere for a reader."
+      "why": "a term from the private workflow names something a contributor cannot open; a milestone letter (M0\u2013M8) names the delivery plan, which is not published. A requirement number (FR-016, SC-004) names a clause of a specification that is not published, so it points nowhere for a reader.; docs/media/ is exempt because compressed video matches these short tokens by chance in its bytes, which is noise rather than a finding"
     },
     {
       "name": "copyright-owner",

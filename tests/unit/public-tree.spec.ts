@@ -428,6 +428,29 @@ describe('the string rules', () => {
     expect(result.stdout).not.toContain('docs/third-party.md');
   });
 
+  it('docs/media/ is exempt from the two vocabulary rules and from nothing else', () => {
+    // Binary media is scanned like every other file — the walker skips nothing — and compressed video
+    // decodes to stray section marks and short tokens by chance: 161 citation findings and 1790
+    // vocabulary findings on one recording. That is noise by construction, and a rule that reports
+    // noise is a rule people learn to ignore.
+    //
+    // **The exemption is two rules, not the directory.** A credential or a personal path in that
+    // directory is still a finding, because those patterns are long enough not to arise by accident
+    // and are the ones worth catching.
+    const fx = fixture('public', {
+      'docs/media/demo.gif': 'pretend bytes with a § and the word speckit in them\n',
+      'docs/media/leak.bin': 'pretend bytes carrying sk-ant-000 and /Users/someone/notes\n',
+    });
+    const result = run(fx.root);
+    const v = verdicts(result.stdout);
+    expect(v.citation).toBe('PASS');
+    expect(v.vocabulary).toBe('PASS');
+    expect(v.credential).toBe('FAIL');
+    expect(v['personal-path']).toBe('FAIL');
+    expect(result.stdout).toContain('docs/media/leak.bin');
+    expect(result.stdout).not.toContain('docs/media/demo.gif');
+  });
+
   it('the four files that spell the patterns are exempt from every string rule', () => {
     const fx = fixture('public', {
       'scripts/lib/public-tree.mjs': '// matches /Users/alice and sk-ant-X and § and kaliper\n',
