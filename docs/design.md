@@ -591,3 +591,5 @@ what keeps the claim non-circular. The demonstrator it runs against is the custo
 `examples/`; [the tutorial](tutorial-first-tool.md) builds a much smaller example — a counter — with
 the same wiring, and [step 4](tutorial-first-tool.md#step-4-call-it-and-watch-the-page-change) is the
 scenario's steps 5 to 8 at that scale.
+
+<!-- deliberately violates the publish check: §1 is a citation of a document nobody outside can read -->
