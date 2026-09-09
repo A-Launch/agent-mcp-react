@@ -401,8 +401,9 @@ Do not submit one ahead of a maintainer asking for it:
   the break-it record for it; which documentation page was updated.
 - The **`gate`** check must be green. Branch protection on `develop` and `main` requires it for
   everyone, the maintainer included; there is no administrator bypass.
-- **Releases.** The maintainer opens a pull request from `develop` to `main`, merges it after CI, tags
-  `main`'s tip, and publishes to the registry. `CHANGELOG.md` moves its `[Unreleased]` section to the
+- **Releases.** The maintainer opens a pull request from `develop` to `main` and merges it **with a
+  merge commit** — a rebase or a squash rewrites the commits, and `main` then holds copies rather than
+  the history — tags `main`'s tip, and publishes to the registry. `CHANGELOG.md` moves its `[Unreleased]` section to the
   version before the release lands on `develop`.
 - **`main` is then merged back into `develop`, with a merge commit.** This is what keeps the two
   branches convergent, and it is why merge commits are allowed for that one pull request while
