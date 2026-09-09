@@ -108,8 +108,10 @@ that happen to be in a dependency array.
 **Symptom: a tool is silently absent and nothing in the console explains it.**
 A `registerTool` rejection was caught and logged instead of thrown. The same published
 implementation turns a duplicate name into a `console.warn` and returns, leaving the tool
-nonexistent and the application unaware. Here, development throws and names the source; production
-preserves the original registration and refuses the later one. A rejection that becomes a log line
+nonexistent and the application unaware. Here the later registration is refused, the original stays
+callable, and the refusal is REPORTED — to `onRegistration` with its code, and on the development
+console with the source. Reported is the point: a log line nobody subscribed to is the failure below,
+while a refusal delivered to a destination the application wired is not. A rejection that becomes a log line
 is the failure this library treats as a defect — an unknown is acceptable, a hidden unknown is not —
 because the page keeps running and the agent's world model is quietly wrong.
 
