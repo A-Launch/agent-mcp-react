@@ -1,0 +1,105 @@
+# Publishes the package to the registry, from CI and never from a laptop.
+#
+# **Why CI rather than a maintainer's machine.** A publish from a laptop is authorised by a long-lived
+# token living in that laptop's home directory, and the artifact it uploads is whatever happened to be
+# in that working tree. Here the artifact is built from a tagged commit that CI checked out itself, and
+# `--provenance` attaches a signed attestation naming the repository, the commit and this workflow — so
+# a consumer can verify where the tarball came from rather than trusting that it came from anywhere.
+#
+# **It publishes only what is on protected `main`, and that is the load-bearing control.** Branch
+# protection does not cover tags: anyone with write access can create `v9.9.9` at any commit, including
+# one that never opened a pull request and never passed the gate. A workflow triggered by a tag is
+# therefore triggered by something unprotected, and the tag alone proves nothing about what it names.
+# So the commit is checked for reachability from `origin/main` and the run stops if it is not there.
+# `main` requires a pull request, the `gate` check, no force push and no deletion, administrators
+# included — so a commit that is on it has passed all of that, and a commit that is not has passed none
+# of it.
+#
+# The environment below is the same rule enforced by the platform rather than by this file: the
+# credential is scoped to it, and its deployment policy admits only `main` and `v*`. Two independent
+# controls, because a shell check protects against a mistake and an environment protects against this
+# file being edited.
+#
+# **It runs the whole gate first.** Publishing is irreversible in the way that matters: a version
+# number is spent even if the release is unpublished within the window the registry allows. The gate is
+# cheap by comparison.
+#
+# Actions are pinned to a full commit SHA, never a tag, because a tag can be moved.
+name: publish
+on:
+  push:
+    tags: ['v*']
+  # So a failed publish can be retried without inventing a version or moving a tag.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The existing tag to publish, for example v0.2.0
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Holds NPM_TOKEN, and its deployment policy admits only `main` and `v*` refs. A workflow edited to
+    # drop the reachability check below still cannot reach the credential from anywhere else.
+    environment: npm
+    permissions:
+      contents: read
+      # Required for --provenance: the attestation is signed with a short-lived OIDC token issued to
+      # this workflow run. No long-lived credential is involved in proving where the artifact came from.
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          registry-url: https://registry.npmjs.org
+
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+
+      # **On protected `main`, or not published at all.** A tag is not a protected ref; this is what
+      # makes "published from main" true rather than intended. `--is-ancestor` treats a commit as
+      # reachable from itself, so a tag ON the tip of `main` passes and a tag on any commit that is not
+      # in `main`'s history — a feature branch, a fork, `develop` before it lands — does not.
+      #
+      # `develop` is genuinely not an ancestor of `main` here: pull requests rebase-merge, so landing
+      # rewrites the commits. That is not an inconvenience to work around, it is the check working.
+      - name: the commit is on protected main
+        run: |
+          # An explicit refspec, so `origin/main` is the ref this compares against rather than
+          # whatever the checkout happened to leave behind.
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          head="$(git rev-parse HEAD)"
+          if ! git merge-base --is-ancestor "$head" origin/main; then
+            echo "::error::$head is not reachable from origin/main, so it has not passed branch protection or the required check. Land it on main and tag the commit that is there."
+            exit 1
+          fi
+          echo "$head is on main"
+
+      # **The tag and the manifest must name the same version, and a mismatch stops the run.**
+      # A tag that names one version while the manifest declares another publishes an artifact nobody
+      # can find from the repository — and this project has already had a release tag drift from the
+      # manifest it sat beside, because the two were written in different places.
+      - name: the tag and the manifest agree
+        run: |
+          tag="${{ github.event.inputs.tag || github.ref_name }}"
+          manifest="v$(node -p "require('./package.json').version")"
+          echo "tag=$tag manifest=$manifest"
+          if [ "$tag" != "$manifest" ]; then
+            echo "::error::the tag $tag does not name the version the manifest declares ($manifest)"
+            exit 1
+          fi
+
+      - run: pnpm gate
+      - run: pnpm verify:public --history
+
+      # `--access public` because the package is scoped, and a scoped package defaults to restricted:
+      # without it the first publish of a new scope fails, or worse, succeeds privately.
+      - name: publish
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
