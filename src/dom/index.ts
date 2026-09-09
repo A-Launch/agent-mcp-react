@@ -27,7 +27,7 @@
 //   - **A validator.** `dom.get_text` declares an input schema, so the factory below takes the
 //     compiled validator from its caller — exactly as an application's tool does.
 //
-// **Its own subpath export** (`@agent-mcp/react/dom`), so a build that never imports it never contains
+// **Its own subpath export** (`agent-mcp-react/dom`), so a build that never imports it never contains
 // it — the levels of control are separate layers, and one confers nothing on another. That is why the
 // provider does not import this module: an application opts in by importing, and an operator opts in
 // by granting, and neither implies the other.

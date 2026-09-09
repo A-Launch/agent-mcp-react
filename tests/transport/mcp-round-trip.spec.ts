@@ -1,11 +1,11 @@
+import { Server, type Transport } from '@modelcontextprotocol/server';
 import {
   type BrowserConnection,
   browserConnectionTransport,
   connectClient,
   type Gateway,
   startGateway,
-} from '@agent-mcp/mock-agent';
-import { Server, type Transport } from '@modelcontextprotocol/server';
+} from 'agent-mcp-mock-agent';
 import { afterEach, describe, expect, it } from 'vitest';
 import WebSocket from 'ws';
 

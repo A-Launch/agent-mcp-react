@@ -1,4 +1,4 @@
-# `@agent-mcp/react`
+# `agent-mcp-react`
 
 **Make your React page an MCP server.**
 
@@ -61,7 +61,7 @@ pnpm pack                           # → agent-mcp-react-0.2.0.tgz
 Then depend on the tarball:
 
 ```jsonc
-{ "dependencies": { "@agent-mcp/react": "file:../agent-mcp-react/agent-mcp-react-0.2.0.tgz" } }
+{ "dependencies": { "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.0.tgz" } }
 ```
 
 A local directory dependency (`file:../agent-mcp-react`) does not work: `publishConfig` applies when
@@ -73,7 +73,7 @@ ESM only. React `>=18` as a peer. Node `>=22` for the toolchain.
 Once it is on the registry, the install is the ordinary one:
 
 ```bash
-npm install @agent-mcp/react
+npm install agent-mcp-react
 ```
 
 ## Use it
@@ -82,8 +82,8 @@ Four props are required: `connection`, `server`, `capabilities`, and `onUnexpect
 snippet is compiled against the packed tarball from a project outside this repository.
 
 ```tsx
-import { AgentMcpProvider, CONFIRMATION } from '@agent-mcp/react';
-import { createAjvValidator } from '@agent-mcp/react/validation';
+import { AgentMcpProvider, CONFIRMATION } from 'agent-mcp-react';
+import { createAjvValidator } from 'agent-mcp-react/validation';
 
 <AgentMcpProvider
   connection={{
@@ -118,7 +118,7 @@ Declare a tool in the component that owns the feature. It exists while that comp
 and the handler always reads current state:
 
 ```tsx
-import { useMcpTool } from '@agent-mcp/react';
+import { useMcpTool } from 'agent-mcp-react';
 
 useMcpTool({
   name: 'account.set_health',

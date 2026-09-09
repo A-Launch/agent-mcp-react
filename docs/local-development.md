@@ -327,7 +327,7 @@ Where each layer's cases live:
   unmount → tool gone; StrictMode → nothing leaked; route change → tool set changes. Read from the
   shared registry and the provider's reports; the transport and integration layers are where the same
   facts are asserted through an MCP client.
-- `tests/transport/` — imports the gateway from `@agent-mcp/mock-agent`, the same one `pnpm dev:agent`
+- `tests/transport/` — imports the gateway from `agent-mcp-mock-agent`, the same one `pnpm dev:agent`
   runs, so the suite tests the gateway a developer actually connects to.
 - `tests/integration/` — the acceptance scenario as ordered cases over **one** application that is
   built once and advanced, so a failure cascades and the first red names where the narrative broke.

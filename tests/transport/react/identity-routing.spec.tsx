@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 
-import { type MockAgent, startMockAgent } from '@agent-mcp/mock-agent';
 import { Server, type Transport } from '@modelcontextprotocol/server';
 import { cleanup, render, waitFor } from '@testing-library/react';
+import { type MockAgent, startMockAgent } from 'agent-mcp-mock-agent';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { AgentMcpProvider, useMcpTabId, useMcpTool } from '../../../src/index.ts';
@@ -26,7 +26,7 @@ import { declareSecureContext } from './harness.tsx';
 // second DOCUMENT and this environment has one. That is the honest boundary of what this layer can
 // show, and the two-real-browser-pages version of the claim is the live run.
 
-const KEY = Symbol.for('@agent-mcp/react.page-instance-identity');
+const KEY = Symbol.for('agent-mcp-react.page-instance-identity');
 const validator = createAjvValidator();
 
 let agent: MockAgent | undefined;

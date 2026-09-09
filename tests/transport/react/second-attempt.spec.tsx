@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
-import { type BrowserConnection, type Gateway, startGateway } from '@agent-mcp/mock-agent';
 import { cleanup, render, waitFor } from '@testing-library/react';
+import { type BrowserConnection, type Gateway, startGateway } from 'agent-mcp-mock-agent';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { AgentMcpProvider, useMcpTabId } from '../../../src/index.ts';
@@ -22,7 +22,7 @@ import { declareSecureContext } from './harness.tsx';
 // spent one under load, are asserted in `reconnect-credentials.spec.tsx`. They are not shown here and
 // must not be read into what is.
 
-const KEY = Symbol.for('@agent-mcp/react.page-instance-identity');
+const KEY = Symbol.for('agent-mcp-react.page-instance-identity');
 const validator = createAjvValidator();
 
 let gateway: Gateway | undefined;

@@ -1,4 +1,4 @@
-import { type Gateway, startGateway } from '@agent-mcp/mock-agent';
+import { type Gateway, startGateway } from 'agent-mcp-mock-agent';
 import { afterEach, describe, expect, it } from 'vitest';
 import { isTransportFailureCode, TRANSPORT_FAILURE } from '../../../src/transport/errors.ts';
 import { createBrowserWebSocketTransport } from '../../../src/transport/websocket.ts';

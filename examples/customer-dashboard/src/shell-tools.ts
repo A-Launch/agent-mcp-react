@@ -1,4 +1,4 @@
-import { bindNavigationTool } from '@agent-mcp/react/router';
+import { bindNavigationTool } from 'agent-mcp-react/router';
 import { pathOf, router, SCREEN } from './router.tsx';
 
 // A tool the application SHELL owns, declared at module scope — before React mounts, and outside every

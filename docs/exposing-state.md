@@ -14,7 +14,7 @@ way to ask what the filters now are, how many rows the page is showing, or wheth
 > `examples/customer-dashboard/src/csp-safe-validator.ts`.
 
 ```tsx
-import { useMcpState } from '@agent-mcp/react';
+import { useMcpState } from 'agent-mcp-react';
 
 function CustomersPage() {
   const [filters, setFilters] = useState<Filters>({ status: [] });
@@ -150,7 +150,7 @@ The schema is compiled once at declaration, never per call.
 | Condition | What happens |
 |---|---|
 | `schema` omitted | Refused at declaration, immediately, in every build. A state surface's return value **is** its contract. |
-| Schema declared, no validator on the provider | Refused — install `createAjvValidator` from `@agent-mcp/react/validation`. |
+| Schema declared, no validator on the provider | Refused — install `createAjvValidator` from `agent-mcp-react/validation`. |
 | The derived name is already taken | The usual duplicate refusal: development throws and names the source, production preserves the original. Note this can happen without you writing the colliding name anywhere — `useMcpState({name: 'customers'})` collides with `useMcpTool({name: 'customers.get_state'})`. |
 | The surface name would derive a reserved name (`dom.`, `runtime.`) | Refused at declaration. |
 | `getState` returns something the schema forbids | Refused **after** the getter ran, with the output-violation code — never the arguments code. |

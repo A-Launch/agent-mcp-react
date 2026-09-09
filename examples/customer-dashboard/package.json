@@ -1,5 +1,5 @@
 {
-  "name": "@agent-mcp/example-customer-dashboard",
+  "name": "agent-mcp-example-customer-dashboard",
   "version": "0.0.0",
   "private": true,
   "description": "The demonstrator this library is proven against: one provider, one tool, one visible change.",
@@ -9,7 +9,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@agent-mcp/react": "workspace:*",
+    "agent-mcp-react": "workspace:*",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.18.2"

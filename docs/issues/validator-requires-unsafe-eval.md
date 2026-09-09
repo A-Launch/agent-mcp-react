@@ -40,7 +40,7 @@ declaring a schema. No test layer had all three, and the demonstrator's dev serv
 
 ## What is affected
 
-- `createAjvValidator`, exported from `@agent-mcp/react/validation` — the validator the documentation
+- `createAjvValidator`, exported from `agent-mcp-react/validation` — the validator the documentation
   recommends and the demonstrator uses.
 - **Not the library's core.** `SchemaValidator` is an interface the application supplies. The seam is
   the right shape; the shipped implementation has an undisclosed requirement.
@@ -77,7 +77,7 @@ That is now corrected everywhere the validator is mentioned.
 
 Either of:
 
-1. A CSP-safe validator shipped from `@agent-mcp/react/validation` alongside the Ajv one, chosen by the
+1. A CSP-safe validator shipped from `agent-mcp-react/validation` alongside the Ajv one, chosen by the
    application.
 2. Build-time schema precompilation, so no code is compiled in the browser at all.
 

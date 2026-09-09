@@ -1,5 +1,5 @@
 // The in-page development inspector (docs/observing-tool-calls.md#the-inspector). Its own subpath
-// export (`@agent-mcp/react/devtools`) so a build that never imports it never contains it.
+// export (`agent-mcp-react/devtools`) so a build that never imports it never contains it.
 //
 // **Single responsibility: it explains, and it cannot act.** It renders what happened — the connection
 // state, the AGENT-VISIBLE tool set (a tool the application has closed is declared and not bridged, so

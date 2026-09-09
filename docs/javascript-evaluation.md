@@ -18,7 +18,7 @@ direction is a refusal.
 
 | # | Condition | If it is missing |
 |---|---|---|
-| 1 | The application **imported** `@agent-mcp/react/evaluate` | `MCP_TOOL_NOT_FOUND` — and the code is not in your bundle at all |
+| 1 | The application **imported** `agent-mcp-react/evaluate` | `MCP_TOOL_NOT_FOUND` — and the code is not in your bundle at all |
 | 2 | An operator **granted** `evaluate` | `MCP_TOOL_CAPABILITY_DENIED` |
 | 3 | A confirmation **resolver** is wired | `MCP_TOOL_CONFIRMATION_UNAVAILABLE`, and the tool stays listed |
 | 4 | A **person approved** this specific call | `MCP_TOOL_CONFIRMATION_REFUSED`, and the expression never ran |
@@ -29,7 +29,7 @@ occurrence of `runtime.evaluate`, the policy-refusal message, or the async-funct
 the capability *granted*. Granting a capability puts nothing in a bundle.
 
 ```tsx
-import { runtimeEvaluateTool } from '@agent-mcp/react/evaluate';
+import { runtimeEvaluateTool } from 'agent-mcp-react/evaluate';
 
 <AgentMcpProvider
   capabilities={{ application: true, dom: { inspect: false, interact: false }, evaluate: true }}

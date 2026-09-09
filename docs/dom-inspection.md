@@ -21,9 +21,9 @@ reading a page and acting on it are different powers. The read-only profile is
 Two independent conditions, and **neither implies the other**.
 
 ```tsx
-import { AgentMcpProvider } from '@agent-mcp/react';
-import { domInspectTools, domInteractTools } from '@agent-mcp/react/dom';
-import { createAjvValidator } from '@agent-mcp/react/validation';
+import { AgentMcpProvider } from 'agent-mcp-react';
+import { domInspectTools, domInteractTools } from 'agent-mcp-react/dom';
+import { createAjvValidator } from 'agent-mcp-react/validation';
 
 const validator = createAjvValidator();
 // Built once at module scope: it compiles a schema, and doing that per render recompiles a constant.
@@ -118,7 +118,7 @@ Two codes, and an agent acts on them differently:
 ### When to call `invalidateDomRefs()`
 
 ```ts
-import { invalidateDomRefs } from '@agent-mcp/react/dom';
+import { invalidateDomRefs } from 'agent-mcp-react/dom';
 ```
 
 Call it when the page changed in a way a snapshot cannot see: the URL is the same, the nodes are still

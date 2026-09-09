@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
-import { type BrowserConnection, connectClient, startGateway } from '@agent-mcp/mock-agent';
+
 import { act, cleanup, render } from '@testing-library/react';
+import { type BrowserConnection, connectClient, startGateway } from 'agent-mcp-mock-agent';
 import { StrictMode, useState } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { AgentMcpProvider, useMcpTool } from '../../../src/index.ts';

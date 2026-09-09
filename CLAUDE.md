@@ -1,4 +1,4 @@
-# `@agent-mcp/react`
+# `agent-mcp-react`
 
 A browser-side React library that exposes a running React application as an MCP server, so an agent
 can drive it through typed tools instead of clicking its UI. The one architectural fact everything

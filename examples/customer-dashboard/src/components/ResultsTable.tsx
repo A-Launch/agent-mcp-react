@@ -1,4 +1,4 @@
-import { useMcpTool } from '@agent-mcp/react';
+import { useMcpTool } from 'agent-mcp-react';
 import type { ReactNode } from 'react';
 import type { Account } from '../domain/accounts.ts';
 import { ACTOR, LABEL, SORT_FIELD, type SortField } from '../domain/vocabulary.ts';

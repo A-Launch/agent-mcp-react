@@ -9,7 +9,7 @@ import { CustomersPage } from './pages/CustomersPage.tsx';
 //
 // `router.navigate()` is a method on an object that exists before React mounts. That is what lets a
 // navigation tool be declared by the application SHELL — outside every component, at import time —
-// which is exactly the case `@agent-mcp/react/actions` exists for (docs/tools-outside-react.md). The
+// which is exactly the case `agent-mcp-react/actions` exists for (docs/tools-outside-react.md). The
 // usual alternative
 // is a mutable ref that a component fills in an effect, and a tool built on one would be registered
 // and non-functional until something rendered: a tool that lies about being ready.

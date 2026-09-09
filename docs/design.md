@@ -8,7 +8,7 @@ in use rather than restating that page.
 
 ## What this library is
 
-`@agent-mcp/react` is a browser-side React library that exposes a running React application as an
+`agent-mcp-react` is a browser-side React library that exposes a running React application as an
 MCP server. An external agent inspects and manipulates the application through typed MCP tools that
 the application's own components declare, so the agent calls `customers.set_filters({country: "RO"})`
 rather than finding a dropdown, clicking it, and finding "Romania". The application keeps owning its
@@ -69,7 +69,7 @@ flow back.
 ```text
 Agent runtime: LLM → MCP client → WebSocket transport
                                         │ WSS, one MCP JSON-RPC message per frame
-Browser: @agent-mcp/react
+Browser: agent-mcp-react
     runtime (server lifecycle, ownership record, derived listing, capability gate)
     transport (the only code that touches a WebSocket)
     webmcp boundary (the only code that touches the document's tool registry)
@@ -106,7 +106,7 @@ A DOM tool for a flow that already has an application tool is a regression, not 
 
 ## Package structure
 
-One package, `@agent-mcp/react`, with subpath exports for the parts an application opts into:
+One package, `agent-mcp-react`, with subpath exports for the parts an application opts into:
 `/actions`, `/validation`, `/dom`, `/evaluate`, `/devtools`, `/redux`, `/zustand` and `/router`.
 [The API reference](reference-api.md) lists what each entry point exports.
 
