@@ -20,8 +20,9 @@ and an agent runtime where the MCP client lives.
 
 ## Status
 
-`0.2.0-dev.0` is the development line, and `0.2.0` is the version the first registry release will
-carry. `0.1.0` is the released version; its notes are in [docs/releases/0.1.0.md](docs/releases/0.1.0.md).
+`0.2.0` is the current version and the first one published from this repository; its notes are in
+[docs/releases/0.2.0.md](docs/releases/0.2.0.md). `0.1.0` came before this repository existed and its
+notes are kept in [docs/releases/0.1.0.md](docs/releases/0.1.0.md).
 Apache-2.0.
 
 ## What the agent can do
@@ -54,13 +55,13 @@ not nine browser-and-version combinations. What has been run, and what has not:
 Not on the npm registry yet. Pack from this repo:
 
 ```bash
-pnpm pack                           # → agent-mcp-react-0.2.0-dev.0.tgz
+pnpm pack                           # → agent-mcp-react-0.2.0.tgz
 ```
 
 Then depend on the tarball:
 
 ```jsonc
-{ "dependencies": { "@agent-mcp/react": "file:../agent-mcp-react/agent-mcp-react-0.2.0-dev.0.tgz" } }
+{ "dependencies": { "@agent-mcp/react": "file:../agent-mcp-react/agent-mcp-react-0.2.0.tgz" } }
 ```
 
 A local directory dependency (`file:../agent-mcp-react`) does not work: `publishConfig` applies when
