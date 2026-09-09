@@ -2,8 +2,9 @@
 
 # The end-to-end suite races itself across engines
 
-**Status: OPEN — cause established, fix not chosen.** It is a defect in the test harness, not in the
-library: nothing here says the library misbehaves.
+**Status: FIXED 2026-09-09.** Cause established, the better of the two fixes taken, and the failure
+reproduced deterministically before and after. It was a defect in the test harness, not in the
+library: nothing here says the library misbehaved.
 
 ## What is seen
 
@@ -44,27 +45,47 @@ see either kind of neighbour.
 The window is small, which is why the suite is usually green: it is the gap between one engine's page
 completing MCP initialization and that engine's case finishing with it.
 
-## Why it is not fixed here
+## The fix
 
-Two fixes are available and choosing between them is a decision about how this layer runs, not a
-correction to a claim:
+Two were available. **Serializing every case that touches the agent** — across files and across
+projects, not merely within a file — is the blunt one, and it costs most of the suite's parallelism
+while leaving every case still reasoning about a list that is not its own.
 
-- **Serialize every case that touches the agent** — across files and across projects, not merely
-  within a file. Serializing the three projects alone does not close it: two spec files in one project
-  still connect at once. This is the blunt fix, and it costs most of the suite's parallelism.
-- **Scope tab selection to the page under test** — have each case identify its own tab rather than
-  asserting anything about the global list. The page already mints an identity per instance, so a case
-  can read that identity from its own page and address it; "exactly one ready tab" then stops being
-  required at all, and the case that deliberately connects a second demonstrator stops needing the
-  global count to be exactly two. This is the better fix and the larger one.
+What was taken instead is **scoping tab selection to the page under test**. The page already mints an
+identity per instance; the two demonstrators now publish it as `data-tab-id` on their connection
+indicator, and `tests/e2e/tab.ts` reads it from the page and waits for the agent to report *that* tab
+ready. Nothing asserts anything about any other tab, so a neighbouring spec file or a second engine
+changes nothing.
 
-Neither is a change to the library. Both belong to whoever next touches the end-to-end harness.
+That removes the question rather than answering it more carefully. "Exactly one ready tab" is no
+longer required anywhere, and the case that deliberately connects a second demonstrator no longer needs
+the global count to be two — it waits for the second page's own tab instead. `tab.ts` is the single
+owner of "which tab is mine": `csp-evaluate.spec.ts` had answered it a different way, by taking the
+difference between two reads of the global list, which attributes to itself any page a neighbour
+connected in the window between them. Both specs now ask the same question of the page.
+
+Serial mode stays in `composable-board.spec.ts`, because those cases build on one another's state. It
+is no longer a guard against addressing the wrong page, and its comment says so.
+
+## How it was proved
+
+The intermittency was removed from the proof. A neighbour page was held connected for the whole run,
+which is the condition that used to arrive by luck:
+
+| Under one connected neighbour | Result |
+|---|---|
+| With the fix | 57 passed, 3 skipped, exit 0 |
+| With the old "exactly one READY tab" restored | **3 failed**, 45 passed, exit 1 |
+
+The failures name themselves: `waited for exactly one READY tab`. Five consecutive full runs with the
+fix and no neighbour were also green, where two of three had failed before it.
 
 ## What must not be done
 
-Adding a retry, widening a timeout, or relaxing "exactly one" to "at least one" would each turn the
-suite green while leaving a case able to address a page it did not open — which is the failure this
-guard exists to catch, and the shape this project treats as a defect rather than a flake.
+Adding a retry, widening a timeout, or relaxing "exactly one" to "at least one" would each have turned
+the suite green while leaving a case able to address a page it did not open — which is the failure the
+guard existed to catch, and the shape this project treats as a defect rather than a flake. None was
+done. The guard was replaced by one that cannot be raced, not loosened.
 
 ## How to reproduce
 
@@ -79,3 +100,7 @@ Two of the three full runs recorded on 2026-09-09 failed, and one was green.
 `pnpm exec playwright test --project=webkit tests/e2e/composable-board.spec.ts` passed on all three
 isolated runs it was given — one project running one file has no neighbour to race, though three runs
 are evidence about those runs rather than a guarantee.
+
+To reproduce it deterministically rather than waiting for the race, hold one demonstrator page
+connected for the duration of the run: with the old mechanism every case that asked for "exactly one
+READY tab" then fails on the first attempt.

@@ -100,6 +100,12 @@ async function getUrl(tabId: string): Promise<string> {
 
 function ConnectionIndicator(): ReactNode {
   const connection = useMcpConnection();
+  // **The page's own identity, published so a test can address THIS page rather than guess.** It is
+  // metadata and never a credential — the gateway reads it only after redeeming a ticket — and it
+  // already travels in the URL this page dials. An attribute rather than visible text: a person has
+  // no use for it, and a harness that infers which tab is its own from a global list is a harness
+  // that addresses somebody else's page.
+  const tabId = useMcpTabId();
 
   // **Every member named, rather than a default that renders the raw word.** The status set widened
   // when reconnection landed, and this rendered `reconnecting` as bare text until it was updated — the
@@ -115,7 +121,11 @@ function ConnectionIndicator(): ReactNode {
         : connection.status;
 
   return (
-    <p className={`connection connection-${connection.status}`} data-testid="connection">
+    <p
+      className={`connection connection-${connection.status}`}
+      data-testid="connection"
+      data-tab-id={tabId}
+    >
       <span className="dot" aria-hidden="true" />
       agent connection: <strong>{label}</strong>
     </p>
