@@ -20,14 +20,12 @@ You do **not** need an agent, an API key, or a backend.
 
 ## Step 1: Install
 
-If the package is published:
-
 ```bash
 pnpm add agent-mcp-react
 ```
 
-If you are working from a checkout, pack it and depend on the tarball — the route that behaves the
-same on every package manager:
+If you are working from a checkout instead, pack it and depend on the tarball — the route that behaves
+the same on every package manager:
 
 ```bash
 pnpm pack        # in the library checkout → agent-mcp-react-0.2.1.tgz
