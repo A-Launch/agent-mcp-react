@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { readyTabOf } from './tab.ts';
 
 // The composable board, in a real browser, over a real socket.
 //
@@ -58,38 +59,11 @@ async function listNames(tab: string): Promise<string[]> {
   return (body.tools ?? []).map((tool) => tool.name);
 }
 
-async function connectedTabs(): Promise<{ tabId: string | null; state: string }[]> {
-  const body = (await (await fetch(`${AGENT}/agent`)).json()) as {
-    tabs: { tabId: string | null; state: string }[];
-  };
-  return body.tabs;
-}
-
-/**
- * The one tab that is READY, waited for rather than assumed.
- *
- * **Two things make the obvious version wrong, and both were measured here.** The page's connection
- * indicator says `connected` as soon as the SOCKET is open, while the agent still records the tab as
- * `connecting` until MCP `initialize` completes — so reading the tab list the instant the UI turns
- * green addresses a tab that cannot answer. And a closed browser context's socket is not reaped the
- * moment the context closes, so the previous case's tab can still be in the list.
- *
- * This waits on a genuinely asynchronous boundary — a handshake crossing a real socket, and a close
- * frame arriving — which is what polling is for. It is not a delay standing in for synchronization.
- */
-async function readyTab(): Promise<string> {
-  for (let turn = 0; turn < 200; turn += 1) {
-    const ready = (await connectedTabs()).filter((tab) => tab.state === 'ready');
-    if (ready.length === 1 && ready[0]?.tabId != null) return ready[0].tabId;
-    await new Promise((resolve) => setTimeout(resolve, 50));
-  }
-  const seen = JSON.stringify(await connectedTabs());
-  throw new Error(`waited for exactly one READY tab and never saw it — the agent reports ${seen}`);
-}
-
-// **Serial, deliberately.** `fullyParallel` is on for this project, and these cases read
-// `/agent`'s tab list to learn which page is theirs. Two cases connecting at once would each see the
-// other's page and address the wrong one — which would look like a flaky suite rather than what it is.
+// **Serial, and no longer for tab disambiguation.** These cases used to read the agent's global tab
+// list to learn which page was theirs, and serial mode was the guard for that — a guard that could
+// only ever cover this file, while `fullyParallel` and three engine projects put neighbours in the
+// same list. `readyTabOf` asks the page instead, so nothing here depends on what else is connected.
+// What remains is ordinary: these cases build on one another's state, so they run in order.
 test.describe.configure({ mode: 'serial' });
 
 test.describe('the composable board, in a browser', () => {
@@ -112,9 +86,8 @@ test.describe('the composable board, in a browser', () => {
     await expect(board.getByTestId('connection')).toContainText('connected', { timeout: 15_000 });
     await expect(board.getByTestId('board-empty')).toBeVisible();
 
-    // Only THIS page is connected, so its tab is unambiguous and can be captured before the second
-    // demonstrator arrives to make it ambiguous.
-    const boardTab = await readyTab();
+    // This page's own tab, read from this page. Nothing is assumed about what else is connected.
+    const boardTab = await readyTabOf(board);
     expect(boardTab).not.toBe('');
 
     const names = await listNames(boardTab);
@@ -151,7 +124,7 @@ test.describe('the composable board, in a browser', () => {
     await board.goto(BOARD);
     await expect(board.getByTestId('connection')).toContainText('connected', { timeout: 15_000 });
 
-    const boardTab = await readyTab();
+    const boardTab = await readyTabOf(board);
     expect(boardTab).not.toBe('');
 
     // The other demonstrator, started on purpose.
@@ -160,11 +133,11 @@ test.describe('the composable board, in a browser', () => {
     await expect(dashboard.getByTestId('connection')).toContainText('connected', {
       timeout: 15_000,
     });
-    await expect
-      .poll(async () => (await connectedTabs()).filter((tab) => tab.state === 'ready').length, {
-        timeout: 15_000,
-      })
-      .toBe(2);
+    // **The dashboard's OWN tab is ready — not "two tabs are ready".** A global count is a claim about
+    // every other spec file and every other engine as well, and it was false whenever one of them had a
+    // page up. What this case needs is only that a SECOND page, this one, is genuinely connected.
+    const dashboardTab = await readyTabOf(dashboard);
+    expect(dashboardTab).not.toBe(boardTab);
 
     // **The negative half.** An unaddressed control request is now refused — which is what makes the
     // positive half below mean something rather than being a request that would have worked anyway.
@@ -185,7 +158,7 @@ test.describe('the composable board, in a browser', () => {
     const board = await context.newPage();
     await board.goto(BOARD);
     await expect(board.getByTestId('connection')).toContainText('connected', { timeout: 15_000 });
-    const tab = await readyTab();
+    const tab = await readyTabOf(board);
 
     // Two tables of the SAME KIND, which is what makes the reorder trap live: a position-derived name
     // would leave the listing byte-identical while every tool drove the wrong panel.
@@ -265,7 +238,7 @@ test.describe('the composable board, in a browser', () => {
     const board = await context.newPage();
     await board.goto(BOARD);
     await expect(board.getByTestId('connection')).toContainText('connected', { timeout: 15_000 });
-    const tab = await readyTab();
+    const tab = await readyTabOf(board);
 
     const added = await callTool(
       'board.add_panel',

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { readyTabOf } from './tab.ts';
 
 // **The one refusal of `runtime.evaluate` that no test-side probe can exercise**
 // (docs/javascript-evaluation.md#when-your-page-forbids-it), made conclusive here.
@@ -23,30 +24,6 @@ import { expect, test } from '@playwright/test';
 
 const AGENT = process.env.AMR_AGENT_HTTP ?? 'http://localhost:45000';
 
-async function readyTabs(): Promise<string[]> {
-  const response = await fetch(`${AGENT}/tabs`);
-  const { tabs } = (await response.json()) as { tabs: { tabId: string; state: string }[] };
-  return tabs.filter((tab) => tab.state === 'ready').map((tab) => tab.tabId);
-}
-
-/**
- * The tab THIS page opened, found by difference.
- *
- * **Not "the most recent ready tab", which is what this did first and why it failed.** The agent
- * runtime holds every page that ever connected to it, so a previous run's tab is still listed — and
- * the call went to one of those, where no dialog was waiting and no page was watching. A test that
- * addressed the wrong tab would have been asserting against somebody else's page.
- */
-async function tabOpenedSince(before: readonly string[]): Promise<string> {
-  for (let attempt = 0; attempt < 40; attempt += 1) {
-    const now = await readyTabs();
-    const mine = now.filter((id) => !before.includes(id));
-    if (mine.length > 0) return mine[mine.length - 1] ?? '';
-    await new Promise((resolve) => setTimeout(resolve, 250));
-  }
-  return '';
-}
-
 async function callTool(id: string, name: string, args: unknown): Promise<string> {
   const response = await fetch(`${AGENT}/call`, {
     method: 'POST',
@@ -62,8 +39,6 @@ test('runtime.evaluate refuses by name when the page forbids evaluation', async 
     process.env.AMR_CAPABILITIES_PROFILE !== 'evaluate',
     'needs the example served with AMR_CAPABILITIES=evaluate; set AMR_CAPABILITIES_PROFILE=evaluate to run',
   );
-
-  const tabsBefore = await readyTabs();
 
   // Served with a real header, from the real server. Nothing about the bundle differs — only the
   // response header does.
@@ -87,7 +62,10 @@ test('runtime.evaluate refuses by name when the page forbids evaluation', async 
   // installs a CSP-safe validator through the `SchemaValidator` seam, which is what any application
   // under a strict policy must do.
 
-  const id = await tabOpenedSince(tabsBefore);
+  // **This page's own tab, read from this page.** This used to be the tab that appeared between two
+  // reads of the agent's global list, which attributes to this case any page a neighbouring spec file
+  // or engine happened to connect in the same window.
+  const id = await readyTabOf(page);
   expect(id, 'this page registered a new tab with the agent runtime').not.toBe('');
 
   // The call blocks on the confirmation dialog, so it is started and answered concurrently.
