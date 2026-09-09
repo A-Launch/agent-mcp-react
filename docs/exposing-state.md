@@ -151,7 +151,7 @@ The schema is compiled once at declaration, never per call.
 |---|---|
 | `schema` omitted | Refused at declaration, immediately, in every build. A state surface's return value **is** its contract. |
 | Schema declared, no validator on the provider | Refused — install `createAjvValidator` from `agent-mcp-react/validation`. |
-| The derived name is already taken | The usual duplicate refusal: development throws and names the source, production preserves the original. Note this can happen without you writing the colliding name anywhere — `useMcpState({name: 'customers'})` collides with `useMcpTool({name: 'customers.get_state'})`. |
+| The derived name is already taken | The usual duplicate refusal: the later registration is rejected, the original stays callable, and it is reported without unmounting the page — development also names the source on the console. Note this can happen without you writing the colliding name anywhere — `useMcpState({name: 'customers'})` collides with `useMcpTool({name: 'customers.get_state'})`. |
 | The surface name would derive a reserved name (`dom.`, `runtime.`) | Refused at declaration. |
 | `getState` returns something the schema forbids | Refused **after** the getter ran, with the output-violation code — never the arguments code. |
 | `getState` returns something unserializable | Refused. Never truncated, never partially sent. |

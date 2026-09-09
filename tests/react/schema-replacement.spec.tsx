@@ -64,8 +64,9 @@ describe('a descriptor change whose new schema will not compile', () => {
       return null;
     }
 
-    // A refused registration is the author's to see, so in development the provider re-throws it
-    // during render. The boundary keeps that observable instead of taking the case down with it.
+    // A refused registration is the author's to see, and it is REPORTED rather than thrown: it used to
+    // re-throw from the provider's render, which unmounted the application over a schema an author
+    // could fix in a second. The boundary stays wired so this case would notice if that came back.
     render(
       boundary(
         caught,
@@ -75,6 +76,7 @@ describe('a descriptor change whose new schema will not compile', () => {
           server={{ name: 'p', version: '0' }}
           validation={{ validator: testValidator }}
           onUnexpectedState={() => undefined}
+          onRegistration={(event) => caught.refused.push(event)}
         >
           <Screen />
         </AgentMcpProvider>,
@@ -101,7 +103,10 @@ describe('a descriptor change whose new schema will not compile', () => {
 
     // And the author is told why, loudly. A tool that vanished silently would be worse than one left
     // wrong: nothing on the page would indicate that a schema stopped compiling.
-    expect(caught.caught.length + caught.unexpected.length).toBeGreaterThan(0);
+    // Reported somewhere is the claim; which channel is the library's business and is asserted by the
+    // cases that own it. The boundary must stay empty — a report is not a teardown.
+    expect(caught.refused.length + caught.unexpected.length).toBeGreaterThan(0);
+    expect(caught.caught).toEqual([]);
   });
 
   it('leaves a tool alone when the change compiles', async () => {

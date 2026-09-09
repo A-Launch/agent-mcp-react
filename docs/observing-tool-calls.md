@@ -12,7 +12,7 @@ unexplainable state, and an unexplainable state is indistinguishable from a wron
   onToolResult={(event) => …}      // settled with a result
   onToolError={(event) => …}       // settled with a refusal, a throw or a cancellation
   onRegistryChange={(event) => …}  // the document's tool registry moved
-  onRegistration={(event) => …}    // a declaration refused before it became a tool
+  onRegistration={(event) => …}    // a declaration refused before it became a tool — every cause
   … />
 ```
 
@@ -134,6 +134,23 @@ interval and stop when it appears — the same thing this repository's own end-t
 
 **Do not read the registry at module scope.** It would run during server-side rendering, where there
 is no document at all.
+
+## The refused-declaration event
+
+`onRegistration` fires when a declaration is refused before it ever becomes a tool, and it carries
+every cause with the `code` that says which: a missing validator, a duplicate name, a name held by a
+foreign script, a reserved prefix.
+
+**A refused declaration does not unmount your application.** It used to: the refusal was re-thrown from
+the provider's render, so an author who forgot to install a validator got a blank page with the
+console message naming the fix underneath it. MCP is a second control interface onto one application,
+and a misconfigured second interface must not take down the first. What has not changed is that the
+tool is refused — absent from `tools/list`, uncallable by an agent and by any page script — and the
+refusal is now scoped to the declaration that earned it, so the other tools on the page survive it.
+
+The event is optional to wire, so a development build also writes the refusal to the console with the
+declaration site. That is the channel for an author who wired nothing; `onRegistration` is the one for
+an operator who did.
 
 ## The registry-change event
 

@@ -129,10 +129,18 @@ export interface Recorder {
   /** Both kinds the destination now carries: a registry-integrity alarm, and a contested name. */
   readonly unexpected: UnexpectedStateReport[];
   readonly caught: unknown[];
+  /**
+   * Declarations refused before they became tools, on `onRegistration`.
+   *
+   * **`caught` should stay empty in every case that fills this one.** A refused declaration reports
+   * and does not throw, so anything reaching the boundary alongside a refusal means the application
+   * was torn down by something that was supposed to be reported to it.
+   */
+  readonly refused: { name: string; prefix?: string; code: string }[];
 }
 
 export function recorder(): Recorder {
-  return { unexpected: [], caught: [] };
+  return { unexpected: [], caught: [], refused: [] };
 }
 
 /**

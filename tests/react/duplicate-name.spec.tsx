@@ -68,6 +68,7 @@ function twoClaims(
       connection={{ getUrl: neverConnects }}
       server={{ name: 'colliding-page', version: '0.0.0' }}
       onUnexpectedState={(failure) => seen.unexpected.push(failure)}
+      onRegistration={(event) => seen.refused.push(event)}
     >
       <Tool />
       <Tool />
@@ -76,13 +77,24 @@ function twoClaims(
 }
 
 describe('a development build', () => {
-  it('stops the author, through the error boundary rather than a log line', async () => {
+  it('reports the refusal and leaves the application standing', async () => {
+    // **This used to throw from the provider's render, and the page went white.** The console message
+    // named the exact fix and sat underneath a tree that no longer rendered — a first integration
+    // reported it as a blank page rather than as the refusal it was.
+    //
+    // The rule the library is built on decides it: MCP is a SECOND control interface onto one
+    // application, and a misconfigured second interface must not take down the first. Production
+    // already worked this way; development, where the author actually is, did not.
     const { AgentMcpProvider, useMcpTool } = await libraryBuiltFor('development');
     const seen = recorder();
-    render(boundary(seen, twoClaims(AgentMcpProvider, useMcpTool, seen)));
+    const view = render(boundary(seen, twoClaims(AgentMcpProvider, useMcpTool, seen)));
 
-    await until(() => seen.caught.length > 0, 'the refusal to reach the error boundary');
-    expect(seen.caught).toHaveLength(1);
+    await until(() => seen.refused.length > 0, 'the refusal to be reported');
+    // Nothing was torn down.
+    expect(seen.caught).toEqual([]);
+    expect(view.container.isConnected).toBe(true);
+    // And refused still means refused: one claimant holds the name, the other never became a tool.
+    expect(await registeredNames()).toEqual(['contested.name']);
   });
 
   it('says the application collided with itself, never that a foreign script holds the name', async () => {
@@ -90,24 +102,23 @@ describe('a development build', () => {
     const seen = recorder();
     render(boundary(seen, twoClaims(AgentMcpProvider, useMcpTool, seen)));
 
-    await until(() => seen.caught.length > 0, 'the refusal to reach the error boundary');
+    await until(() => seen.refused.length > 0, 'the refusal to be reported');
     // An author told "a foreign script holds this" goes looking outside their own code for a conflict
     // that is not there.
-    expect(codeOf(seen.caught[0])).toBe(REGISTRATION_REFUSED.nameHeldByThisApplication);
-    expect(codeOf(seen.caught[0])).not.toBe(REGISTRATION_REFUSED.nameHeldByForeignOwner);
+    expect(seen.refused[0]?.code).toBe(REGISTRATION_REFUSED.nameHeldByThisApplication);
+    expect(seen.refused[0]?.code).not.toBe(REGISTRATION_REFUSED.nameHeldByForeignOwner);
   });
 
-  it('names the tool and where the later declaration came from', async () => {
+  it('names the tool it refused', async () => {
     const { AgentMcpProvider, useMcpTool } = await libraryBuiltFor('development');
     const seen = recorder();
     render(boundary(seen, twoClaims(AgentMcpProvider, useMcpTool, seen)));
 
-    await until(() => seen.caught.length > 0, 'the refusal to reach the error boundary');
-    const message = String((seen.caught[0] as Error).message);
-    expect(message).toContain('contested.name');
-    // Best effort by design: it degrades to no source rather than to a wrong one. Where the environment
-    // offers a stack, the refusal points at a declaration instead of at a name.
-    expect(message).toContain('declared at:');
+    await until(() => seen.refused.length > 0, 'the refusal to be reported');
+    expect(seen.refused[0]?.name).toBe('contested.name');
+    // The declaration site still travels — on the development console, which is where an author with
+    // nothing wired reads it. Asserting the console's own text here would be asserting a format; what
+    // this case owns is that the event names the tool.
   });
 });
 
@@ -194,15 +205,17 @@ describe('a name held by a script this library does not own', () => {
           connection={{ getUrl: neverConnects }}
           server={{ name: 'colliding-page', version: '0.0.0' }}
           onUnexpectedState={(failure) => seen.unexpected.push(failure)}
+          onRegistration={(event) => seen.refused.push(event)}
         >
           <Tool />
         </AgentMcpProvider>,
       ),
     );
 
-    await until(() => seen.caught.length > 0, 'the refusal to reach the error boundary');
-    expect(codeOf(seen.caught[0])).toBe(REGISTRATION_REFUSED.nameHeldByForeignOwner);
-    expect(codeOf(seen.caught[0])).not.toBe(REGISTRATION_REFUSED.nameHeldByThisApplication);
+    await until(() => seen.refused.length > 0, 'the refusal to be reported');
+    expect(seen.caught).toEqual([]);
+    expect(seen.refused[0]?.code).toBe(REGISTRATION_REFUSED.nameHeldByForeignOwner);
+    expect(seen.refused[0]?.code).not.toBe(REGISTRATION_REFUSED.nameHeldByThisApplication);
   });
 
   it('is reported as foreign in a production build too — the split changes the channel, not the cause', async () => {

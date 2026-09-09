@@ -11,6 +11,35 @@ All notable changes to `agent-mcp-react` are recorded here. The format follows
 
 Nothing yet.
 
+## [0.3.0] — 2026-09-09
+
+A behaviour change and one public type change, both in the same area. Notes:
+[docs/releases/0.3.0.md](docs/releases/0.3.0.md).
+
+### Changed
+
+- **A refused declaration no longer unmounts your application.** It was re-thrown from the provider's
+  render, so an author who forgot to install a validator got a blank page — with the console message
+  naming the exact import sitting underneath a tree that no longer rendered. MCP is a second control
+  interface onto one application, and a misconfigured second interface must not take down the first.
+  **What has not changed is that the declaration is refused**: the tool is absent from `tools/list`
+  and callable by nobody. The refusal is now scoped to the declaration that earned it, so the other
+  tools on the page survive it — previously one unvalidated tool cost you every tool.
+- **`onRegistration` carries every refused declaration**, with the `code` that says which: a missing
+  validator, a duplicate name, a foreign name, a reserved prefix. It previously carried only the
+  reserved prefix. A development build also writes the refusal to the console with the declaration
+  site, for an author who wired no observer.
+- **`McpRegistrationEvent#prefix` is optional.** It is meaningless for three of the four causes, and a
+  required field a consumer has to ignore is worse than an absent one. **A TypeScript consumer reading
+  `event.prefix` must now handle `undefined`** — the one source change this release asks of you.
+- `onUnexpectedState` still receives what it received before. Its documentation no longer says setup
+  failures throw, because they do not.
+
+### Fixed
+
+- The documentation pages that described the old behaviour — the design page, the API reference, the
+  troubleshooting page, the state and dependency pages — say what happens now.
+
 ## [0.2.3] — 2026-09-09
 
 ### Added
@@ -104,7 +133,8 @@ The first release, made before this repository existed. Its notes are kept in
 repository's history, which begins at the initial public import. A tag of that name could only point
 at a later tree and misdescribe itself, so the entry links its notes instead of a tag.
 
-[Unreleased]: https://github.com/A-Launch/agent-mcp-react/compare/v0.2.3...develop
+[Unreleased]: https://github.com/A-Launch/agent-mcp-react/compare/v0.3.0...develop
+[0.3.0]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.3.0
 [0.2.3]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.3
 [0.2.2]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.2
 [0.2.1]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.1
