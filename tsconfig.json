@@ -9,7 +9,7 @@
   "include": ["src", "tests", "tools", "*.ts", "*.config.ts"],
   // `tests/consumer/fixture` is EXCLUDED because it is not source of this project: it is a template
   // copied into a temporary directory by `scripts/verify-consumer.mjs` and compiled THERE, against the
-  // packed tarball and its own dependencies. Compiling it here would resolve `@agent-mcp/react/*` to
+  // packed tarball and its own dependencies. Compiling it here would resolve `agent-mcp-react/*` to
   // this repository's own paths rather than the shipped export map — which is the one thing that
   // fixture exists to test, so an in-repo pass would prove the opposite of what it claims.
   "exclude": ["node_modules", "dist", "**/dist", "tests/consumer/fixture"]

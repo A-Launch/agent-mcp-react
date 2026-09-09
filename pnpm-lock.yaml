@@ -18,15 +18,6 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
     devDependencies:
-      '@agent-mcp/example-composable-board':
-        specifier: workspace:*
-        version: link:examples/composable-board
-      '@agent-mcp/example-customer-dashboard':
-        specifier: workspace:*
-        version: link:examples/customer-dashboard
-      '@agent-mcp/mock-agent':
-        specifier: workspace:*
-        version: link:tools/mock-agent
       '@biomejs/biome':
         specifier: ^2.0.0
         version: 2.5.9
@@ -48,6 +39,15 @@ importers:
       '@types/ws':
         specifier: ^8.18.0
         version: 8.18.1
+      agent-mcp-example-composable-board:
+        specifier: workspace:*
+        version: link:examples/composable-board
+      agent-mcp-example-customer-dashboard:
+        specifier: workspace:*
+        version: link:examples/customer-dashboard
+      agent-mcp-mock-agent:
+        specifier: workspace:*
+        version: link:tools/mock-agent
       esbuild:
         specifier: ^0.28.2
         version: 0.28.2
@@ -94,7 +94,7 @@ importers:
 
   examples/composable-board:
     dependencies:
-      '@agent-mcp/react':
+      agent-mcp-react:
         specifier: workspace:*
         version: link:../..
       react:
@@ -119,7 +119,7 @@ importers:
 
   examples/customer-dashboard:
     dependencies:
-      '@agent-mcp/react':
+      agent-mcp-react:
         specifier: workspace:*
         version: link:../..
       react:

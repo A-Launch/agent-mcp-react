@@ -516,7 +516,7 @@ two platform preconditions are in
 
 **Symptom: the DOM module ships in a build that disabled it.**
 A static import from a shared entry point defeats tree-shaking. Level 2 has its own subpath export
-(`@agent-mcp/react/dom`) so that a build which never imports it never contains it. The provider
+(`agent-mcp-react/dom`) so that a build which never imports it never contains it. The provider
 therefore does NOT import it: an application opts in by importing and an operator by granting, and
 neither implies the other. Measured: the customer dashboard's bundle is 7,691 bytes smaller without
 the import and contains no trace of the snapshot code. A seam row in

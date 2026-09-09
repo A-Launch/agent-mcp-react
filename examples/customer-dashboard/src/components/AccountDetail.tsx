@@ -1,4 +1,4 @@
-import { useMcpTool } from '@agent-mcp/react';
+import { useMcpTool } from 'agent-mcp-react';
 import { type ReactNode, useState } from 'react';
 import type { Account } from '../domain/accounts.ts';
 import { ACTOR, HEALTH, type Health, LABEL } from '../domain/vocabulary.ts';

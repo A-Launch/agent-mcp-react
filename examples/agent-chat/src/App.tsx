@@ -13,7 +13,7 @@ import { type Entry, failed, fold, personSaid } from './transcript.ts';
 
 // The chat page: the agent's face, on the other side of the desk from the dashboard.
 //
-// **Nothing on this page is instrumented.** It imports no part of `@agent-mcp/react`, mounts no
+// **Nothing on this page is instrumented.** It imports no part of `agent-mcp-react`, mounts no
 // provider, registers no tool and opens no WebSocket. The socket belongs to the dashboard, which
 // dialled outward to the agent process; this page is an ordinary HTTP client of that same process.
 // That separation is the architecture, not a simplification: the MCP client has to live where the

@@ -97,8 +97,9 @@ jobs:
       - run: pnpm gate
       - run: pnpm verify:public --history
 
-      # `--access public` because the package is scoped, and a scoped package defaults to restricted:
-      # without it the first publish of a new scope fails, or worse, succeeds privately.
+      # `--access public` stated rather than relied on. The package name is unscoped, which already
+      # defaults to public, so this changes nothing today — it is here so that a later move to a scope
+      # cannot publish restricted by default and look like it worked.
       - name: publish
         run: npm publish --access public --provenance
         env:

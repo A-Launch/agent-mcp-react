@@ -1,4 +1,4 @@
-import type { AgentCapabilities } from '@agent-mcp/react';
+import type { AgentCapabilities } from 'agent-mcp-react';
 
 // Which capability profile this page grants, chosen by an operator at start-up.
 //

@@ -54,7 +54,7 @@ try {
   cpSync(join(repo, 'tests/consumer/fixture'), workspace, { recursive: true });
   cpSync(join(repo, packed), join(workspace, packed));
   const manifest = JSON.parse(readFileSync(join(workspace, 'package.json'), 'utf8'));
-  manifest.dependencies['@agent-mcp/react'] = `file:./${packed}`;
+  manifest.dependencies['agent-mcp-react'] = `file:./${packed}`;
   writeFileSync(join(workspace, 'package.json'), `${JSON.stringify(manifest, null, 2)}\n`);
   try {
     run('pnpm', ['install', '--offline', '--ignore-workspace'], workspace);

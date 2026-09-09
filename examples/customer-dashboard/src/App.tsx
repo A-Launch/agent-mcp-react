@@ -3,10 +3,10 @@ import {
   CONNECTION_STATUS,
   useMcpConnection,
   useMcpTabId,
-} from '@agent-mcp/react';
-import { domInspectTools, domInteractTools } from '@agent-mcp/react/dom';
-import { runtimeEvaluateTool } from '@agent-mcp/react/evaluate';
-import { createAjvValidator } from '@agent-mcp/react/validation';
+} from 'agent-mcp-react';
+import { domInspectTools, domInteractTools } from 'agent-mcp-react/dom';
+import { runtimeEvaluateTool } from 'agent-mcp-react/evaluate';
+import { createAjvValidator } from 'agent-mcp-react/validation';
 import type { ReactNode } from 'react';
 import { selectedProfile } from './capability-profile.ts';
 import { useConfirmationSurface } from './components/ConfirmationDialog.tsx';

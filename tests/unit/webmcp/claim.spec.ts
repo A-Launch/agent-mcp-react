@@ -10,7 +10,7 @@ import { CLAIM_REFUSED } from '../../../src/webmcp/errors.ts';
 // other's tools foreign, every symptom pointing at "another script on the page". Every one of those
 // symptoms is the specified rules behaving correctly, which is what makes it so expensive to diagnose.
 
-const CLAIM_KEY = Symbol.for('@agent-mcp/react.document-provider-claim');
+const CLAIM_KEY = Symbol.for('agent-mcp-react.document-provider-claim');
 
 function clearClaim(): void {
   Reflect.deleteProperty(document as object, CLAIM_KEY);

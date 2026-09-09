@@ -11,7 +11,7 @@ import { RUNTIME_FAILURE, RuntimeError } from '../runtime/errors.ts';
 // So this module is small and the conditions around it are the feature. It is reachable only when ALL
 // of these hold, and none implies another:
 //
-//   1. the application IMPORTED it from `@agent-mcp/react/evaluate` — a build that did not contains
+//   1. the application IMPORTED it from `agent-mcp-react/evaluate` — a build that did not contains
 //      none of this code;
 //   2. an operator GRANTED the `evaluate` capability — nothing short of it admits this, not
 //      `application`, not either half of `dom`;

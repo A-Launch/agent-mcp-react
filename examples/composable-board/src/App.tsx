@@ -1,5 +1,5 @@
-import { AgentMcpProvider, useMcpTabId } from '@agent-mcp/react';
-import { createAjvValidator } from '@agent-mcp/react/validation';
+import { AgentMcpProvider, useMcpTabId } from 'agent-mcp-react';
+import { createAjvValidator } from 'agent-mcp-react/validation';
 import type { ReactNode } from 'react';
 import { AGENT_ORIGIN } from './agent-client.ts';
 import { Board } from './components/Board.tsx';

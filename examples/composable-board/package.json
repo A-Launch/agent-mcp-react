@@ -1,5 +1,5 @@
 {
-  "name": "@agent-mcp/example-composable-board",
+  "name": "agent-mcp-example-composable-board",
   "version": "0.0.0",
   "private": true,
   "description": "A board whose layout is the shared surface: a person describes a dashboard and panels appear, and the same panels can be added, configured and removed with the mouse.",
@@ -9,7 +9,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@agent-mcp/react": "workspace:*",
+    "agent-mcp-react": "workspace:*",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

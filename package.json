@@ -1,5 +1,5 @@
 {
-  "name": "@agent-mcp/react",
+  "name": "agent-mcp-react",
   "version": "0.2.0",
   "description": "Expose a running React application as an MCP server over an authenticated WebSocket transport \u2014 a second control interface onto one application, not browser automation.",
   "license": "Apache-2.0",
@@ -53,9 +53,9 @@
     "react": ">=18"
   },
   "devDependencies": {
-    "@agent-mcp/example-composable-board": "workspace:*",
-    "@agent-mcp/example-customer-dashboard": "workspace:*",
-    "@agent-mcp/mock-agent": "workspace:*",
+    "agent-mcp-example-composable-board": "workspace:*",
+    "agent-mcp-example-customer-dashboard": "workspace:*",
+    "agent-mcp-mock-agent": "workspace:*",
     "@biomejs/biome": "^2.0.0",
     "@playwright/test": "^1.56.0",
     "@testing-library/react": "^16.3.0",

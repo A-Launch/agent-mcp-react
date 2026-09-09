@@ -4,7 +4,7 @@ Thin bindings from one store action to one tool. Optional and deletable: removin
 convenience, never a capability.
 
 ```ts
-import { bindReduxTool } from '@agent-mcp/react/redux';
+import { bindReduxTool } from 'agent-mcp-react/redux';
 
 bindReduxTool({
   name: 'customers.set_filters',
@@ -17,7 +17,7 @@ bindReduxTool({
 ```
 
 ```ts
-import { bindZustandTool } from '@agent-mcp/react/zustand';
+import { bindZustandTool } from 'agent-mcp-react/zustand';
 
 bindZustandTool({
   name: 'customers.set_filters',
@@ -29,7 +29,7 @@ bindZustandTool({
 ```
 
 ```ts
-import { bindNavigationTool, bindUrlFilterTool } from '@agent-mcp/react/router';
+import { bindNavigationTool, bindUrlFilterTool } from 'agent-mcp-react/router';
 
 bindNavigationTool({
   name: 'customers.open',

@@ -21,7 +21,7 @@ import {
 //
 // **Module scope, not React context, and that is a correctness requirement rather than a style call.**
 // `board.add_panel`, `board.remove_panel` and `board.reorder` are declared at IMPORT TIME through
-// `@agent-mcp/react/actions`, before React mounts. A handler that reached for a context would have no
+// `agent-mcp-react/actions`, before React mounts. A handler that reached for a context would have no
 // component to read it from, and a ref filled in during an effect would leave those tools registered and
 // non-functional until something rendered — a tool that lies about being ready. React subscribes to this
 // store; it does not own it. `examples/customer-dashboard` creates its router at module scope for

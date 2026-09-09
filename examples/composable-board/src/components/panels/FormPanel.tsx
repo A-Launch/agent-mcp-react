@@ -1,4 +1,4 @@
-import { useMcpTool } from '@agent-mcp/react';
+import { useMcpTool } from 'agent-mcp-react';
 import type { ReactNode } from 'react';
 import {
   ACCOUNT_FORM_FIELDS,

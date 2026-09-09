@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
-import { type BrowserConnection, connectClient, startGateway } from '@agent-mcp/mock-agent';
+
 import { act, cleanup, render } from '@testing-library/react';
+import { type BrowserConnection, connectClient, startGateway } from 'agent-mcp-mock-agent';
 import { Component, type ReactNode, useState } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { AgentMcpProvider, useMcpTool } from '../../../src/index.ts';
@@ -168,7 +169,7 @@ describe('a tool that declares a schema with no validator installed', () => {
     expect(message).toContain('panel.set');
     // The message has to be actionable, not merely correct: an author reading it should not have to
     // find this feature's specification to learn what to do.
-    expect(message).toContain('@agent-mcp/react/validation');
+    expect(message).toContain('agent-mcp-react/validation');
   });
 });
 

@@ -8,9 +8,9 @@ import {
   useMcpState,
   useMcpTabId,
   useMcpTool,
-} from '@agent-mcp/react';
-import { registerMcpTool } from '@agent-mcp/react/actions';
-import { createAjvValidator } from '@agent-mcp/react/validation';
+} from 'agent-mcp-react';
+import { registerMcpTool } from 'agent-mcp-react/actions';
+import { createAjvValidator } from 'agent-mcp-react/validation';
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { surface } from './surface';

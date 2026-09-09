@@ -1,5 +1,5 @@
-import type { ConfirmationRequest } from '@agent-mcp/react';
-import { CONFIRMATION, type ConfirmationDecision } from '@agent-mcp/react';
+import type { ConfirmationRequest } from 'agent-mcp-react';
+import { CONFIRMATION, type ConfirmationDecision } from 'agent-mcp-react';
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 // The surface a person actually decides on, for tools that declare `confirmation: 'required'`.

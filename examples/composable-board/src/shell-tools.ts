@@ -1,5 +1,5 @@
-import type { ToolCallContext } from '@agent-mcp/react';
-import { registerMcpTool } from '@agent-mcp/react/actions';
+import type { ToolCallContext } from 'agent-mcp-react';
+import { registerMcpTool } from 'agent-mcp-react/actions';
 import { actionNamesFor, CATALOG } from './catalog/kinds.ts';
 import {
   DATA_SOURCES,
