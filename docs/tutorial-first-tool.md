@@ -30,12 +30,12 @@ If you are working from a checkout, pack it and depend on the tarball — the ro
 same on every package manager:
 
 ```bash
-pnpm pack        # in the library checkout → agent-mcp-react-0.2.0.tgz
+pnpm pack        # in the library checkout → agent-mcp-react-0.2.1.tgz
 ```
 
 ```jsonc
 // your app's package.json
-{ "dependencies": { "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.0.tgz" } }
+{ "dependencies": { "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.1.tgz" } }
 ```
 
 A `file:` dependency on the **directory** does not work. The reason, and the other routes, are in
