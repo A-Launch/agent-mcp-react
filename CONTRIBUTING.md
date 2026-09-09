@@ -401,9 +401,15 @@ Do not submit one ahead of a maintainer asking for it:
   the break-it record for it; which documentation page was updated.
 - The **`gate`** check must be green. Branch protection on `develop` and `main` requires it for
   everyone, the maintainer included; there is no administrator bypass.
-- **Releases.** The maintainer opens a pull request from `develop` to `main`, rebase-merges it after
-  CI, tags `main`'s tip, and publishes to the registry. `CHANGELOG.md` moves its `[Unreleased]`
-  section to the version before the release lands on `develop`.
+- **Releases.** The maintainer opens a pull request from `develop` to `main`, merges it after CI, tags
+  `main`'s tip, and publishes to the registry. `CHANGELOG.md` moves its `[Unreleased]` section to the
+  version before the release lands on `develop`.
+- **`main` is then merged back into `develop`, with a merge commit.** This is what keeps the two
+  branches convergent, and it is why merge commits are allowed for that one pull request while
+  everything else squashes or rebases. Rebase-merging rewrites commits, so without the back-merge the
+  same change comes to exist as two objects — one per branch — and the branches can never agree again
+  even while their trees are identical. If you see `main` reported as both ahead of and behind
+  `develop` with an empty diff between them, that is what happened.
 
 ## 13. Contribution terms
 
