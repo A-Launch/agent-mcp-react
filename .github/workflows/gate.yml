@@ -11,6 +11,13 @@ on:
   pull_request:
   push:
     branches: [main, develop]
+  # Requestable on any ref, because a push cannot always be relied on to produce a run. The first
+  # commit of this repository was created by an atomic push of develop, main and a tag onto an empty
+  # remote, and no run followed it — observed twice, on two independently created repositories, with
+  # Actions enabled and this workflow active. The cause of that is not established here; what is
+  # established is that the tree which has never been checked is exactly the one nobody can ask about,
+  # and this removes that.
+  workflow_dispatch:
 jobs:
   gate:
     runs-on: ubuntu-latest
