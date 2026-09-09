@@ -11,6 +11,20 @@ All notable changes to `agent-mcp-react` are recorded here. The format follows
 
 Nothing yet.
 
+## [0.2.2] — 2026-09-09
+
+Documentation only. `src/` is unchanged from [0.2.1](docs/releases/0.2.1.md).
+
+### Changed
+
+- **The README carries two quickstarts** — one for using the package, one for working on the library —
+  and leads with the registry install, which is now the ordinary route. Released so that the README on
+  the registry says what the repository says: npm serves the README from the published tarball, so a
+  documentation change reaches a package page only by being published.
+- **No document restates the package version.** The packed tarball's name appeared in six places
+  across three pages, each of which had to be swept at every release and was twice found stale.
+  `package.json` owns the version and the pages no longer repeat it.
+
 ## [0.2.1] — 2026-09-09
 
 ### Fixed
@@ -74,7 +88,8 @@ The first release, made before this repository existed. Its notes are kept in
 repository's history, which begins at the initial public import. A tag of that name could only point
 at a later tree and misdescribe itself, so the entry links its notes instead of a tag.
 
-[Unreleased]: https://github.com/A-Launch/agent-mcp-react/compare/v0.2.1...develop
+[Unreleased]: https://github.com/A-Launch/agent-mcp-react/compare/v0.2.2...develop
+[0.2.2]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.2
 [0.2.1]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.1
 [0.2.0]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.0
 [0.1.0]: docs/releases/0.1.0.md

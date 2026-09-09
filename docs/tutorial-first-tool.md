@@ -20,22 +20,20 @@ You do **not** need an agent, an API key, or a backend.
 
 ## Step 1: Install
 
-If the package is published:
-
 ```bash
 pnpm add agent-mcp-react
 ```
 
-If you are working from a checkout, pack it and depend on the tarball — the route that behaves the
-same on every package manager:
+If you are working from a checkout instead, pack it and depend on the tarball — the route that behaves
+the same on every package manager:
 
 ```bash
-pnpm pack        # in the library checkout → agent-mcp-react-0.2.1.tgz
+pnpm pack        # in the library checkout → agent-mcp-react-<version>.tgz
 ```
 
 ```jsonc
 // your app's package.json
-{ "dependencies": { "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.1.tgz" } }
+{ "dependencies": { "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-<version>.tgz" } }
 ```
 
 A `file:` dependency on the **directory** does not work. The reason, and the other routes, are in

@@ -1,5 +1,6 @@
 # `agent-mcp-react`
 
+[![npm](https://img.shields.io/npm/v/agent-mcp-react.svg)](https://www.npmjs.com/package/agent-mcp-react)
 [![gate](https://github.com/A-Launch/agent-mcp-react/actions/workflows/gate.yml/badge.svg?branch=main)](https://github.com/A-Launch/agent-mcp-react/actions/workflows/gate.yml)
 [![license](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![node](https://img.shields.io/badge/node-%3E%3D22-brightgreen.svg)](.nvmrc)
@@ -48,30 +49,38 @@ The documented browser matrix is a support target, not fully verified. Three Pla
 not nine browser-and-version combinations. What has been run, and what has not:
 [docs/browser-support.md](docs/browser-support.md).
 
-## Install
-
-Pack from this repo:
-
-```bash
-pnpm pack                           # → agent-mcp-react-0.2.1.tgz
-```
-
-Then depend on the tarball:
-
-```jsonc
-{ "dependencies": { "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.1.tgz" } }
-```
-
-A local directory dependency (`file:../agent-mcp-react`) does not work: `publishConfig` applies when
-a package is packed, never when a directory is linked. Routes, and what fails:
-[docs/consuming-without-publishing.md](docs/consuming-without-publishing.md).
-
-ESM only. React `>=18` as a peer. Node `>=22` for the toolchain.
-
-Once it is on the registry, the install is the ordinary one:
+## Quickstart — using it in your app
 
 ```bash
 npm install agent-mcp-react
+```
+
+ESM only. React `>=18` as a peer, Node `>=22` for the toolchain, and a secure context in the browser
+(`localhost` counts).
+
+Wrap your app in the provider and declare one tool in the component that owns the state — both shown
+in full under [Use it](#use-it) below. Then open the page and paste this into the browser console:
+
+```js
+const mc = document.modelContext;
+const tool = (await mc.getTools()).find((t) => t.name === 'counter.increment');
+await mc.executeTool(tool, JSON.stringify({ by: 7 }));
+```
+
+The number on the page changes. **You needed no agent, no API key and no backend to see that** — the
+tool is in the browser's own per-document registry, which is exactly where a browser-native agent
+looks. Connecting an external agent over a socket is a later step, and your backend owns it.
+
+The same path, at a slower pace and with the reasons:
+**[docs/tutorial-first-tool.md](docs/tutorial-first-tool.md)** — about fifteen minutes.
+
+**Working from a checkout instead?** Pack it and depend on the tarball; a `file:` dependency on the
+*directory* does not work, because `publishConfig` applies when a package is packed and never when a
+directory is linked. Routes and failure modes:
+[docs/consuming-without-publishing.md](docs/consuming-without-publishing.md).
+
+```bash
+pnpm pack        # → agent-mcp-react-<version>.tgz
 ```
 
 ## Use it
@@ -174,21 +183,38 @@ The provider takes `getUrl()` and never a credential.
 | To let an agent read state | [docs/exposing-state.md](docs/exposing-state.md) |
 | To bind Redux, Zustand, or a router | [docs/store-adapters.md](docs/store-adapters.md) |
 | The design, condensed | [docs/design.md](docs/design.md) |
-| What changed, and when | [CHANGELOG.md](CHANGELOG.md) · [release notes](docs/releases/0.2.1.md) |
+| What changed, and when | [CHANGELOG.md](CHANGELOG.md) |
 | Everything else | [docs/README.md](docs/README.md) |
 
-## Local development
+## Quickstart — working on the library
 
 ```bash
-pnpm install
+git clone https://github.com/A-Launch/agent-mcp-react.git
+cd agent-mcp-react
+pnpm install                   # Node >=22; corepack enable gets the pinned pnpm
+scripts/setup-git-hooks.sh     # points core.hooksPath at .githooks/
+pnpm gate                      # everything that must be green before a pull request
+```
+
+`pnpm gate` is the whole health check in one command and takes a few minutes. If it passes on a fresh
+clone, your environment is right and anything that breaks later is yours.
+
+To watch an agent drive a real page, run three servers in three terminals — the pages are demonstrators
+in this repository, and the agent is a mock that stands in for a real runtime:
+
+```bash
 pnpm dev:agent      # mock agent runtime  :45000
 pnpm dev:example    # customer dashboard  :45010
-pnpm dev:chat       # agent chat          :45020
 pnpm dev:board      # composable board    :45030
 ```
 
-Ports, environment variables and the test layers:
+Then open <http://localhost:45010>, and drive it from
+<http://localhost:45020> (`pnpm dev:chat`) or by calling the mock agent's HTTP endpoints directly.
+Ports, environment variables, capability profiles and the test layers:
 [docs/local-development.md](docs/local-development.md).
+
+**Before your first pull request**, read sections 2 and 3 of
+[CONTRIBUTING.md](CONTRIBUTING.md) — setup and the gate. The rest can wait until you need it.
 
 ## Health gate
 
