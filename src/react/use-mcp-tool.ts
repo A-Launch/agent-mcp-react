@@ -6,7 +6,12 @@ import type {
   ToolCallContext,
   ToolHandler,
 } from '../runtime/index.ts';
-import { FAILURE_VOCABULARY, GATE_OUTCOME, reservedPrefixOf } from '../runtime/index.ts';
+import {
+  FAILURE_VOCABULARY,
+  GATE_OUTCOME,
+  RuntimeError,
+  reservedPrefixOf,
+} from '../runtime/index.ts';
 import { normalize } from '../runtime/invocation.ts';
 import { check, VALIDATION } from '../runtime/validation.ts';
 import {
@@ -403,22 +408,36 @@ function reportRegistrationFailure(
   binding: {
     reportFailure(failure: unknown): void;
     reportOperational(failure: unknown): void;
-    reportRegistrationEvent(event: { name: string; prefix: string; code: string }): void;
+    reportRegistrationEvent(event: { name: string; prefix?: string; code: string }): void;
   },
   cause: unknown,
   source: string | undefined,
 ): void {
-  // **Observed BEFORE the build branch, so both builds report it.** A reserved prefix is refused at
-  // declaration and produces no call, ever — so if this event were emitted on only one of the two
-  // paths, an author in the other build would see a tool silently missing from `tools/list` with
-  // nothing anywhere to explain it, which is the exact condition this event exists to prevent (see
-  // docs/observing-tool-calls.md).
+  // **A refused declaration never unmounts the application, in either build.**
   //
-  // Only the reserved-prefix refusal is surfaced here. A duplicate name and a foreign name already
-  // reach the operator through the channels below with codes of their own, and re-homing them would
-  // move a fact off its one owner and onto a second.
-  if (cause instanceof WebMcpBoundaryError && cause.code === REGISTRATION_REFUSED.nameReserved) {
-    const prefix = reservedPrefixOf(cause.subject ?? '');
+  // It used to. A failure here reached `reportFailure`, which stored it and re-threw it from the
+  // provider's next render — so an author who forgot a validator got a white screen, and the console
+  // message telling them exactly what to import sat underneath a page that no longer rendered. The
+  // argument for throwing was that an application cannot log past it. The argument against is the one
+  // this library is built on: MCP is a SECOND control interface onto one application, and a second
+  // interface that is misconfigured must not take down the first. A person's UI does not stop working
+  // because an agent's did.
+  //
+  // What does NOT change is the part that matters for reachability: the tool is not registered. An
+  // agent cannot call it, no page script can call it, and it is absent from `tools/list` — the
+  // declaration was refused, and refused is what it stays.
+  //
+  // So the failure is REPORTED rather than thrown, on two channels that both already existed:
+  //
+  //   `onRegistration`  every refused declaration, with the code that refused it. One kind of event,
+  //                     one channel, whatever the cause — a consumer branches on `code`.
+  //   `console.error`   in development only, carrying the message and the declaration site, because
+  //                     the destination above is optional and an author who wired nothing must still
+  //                     be told at the moment they can fix it.
+  const code = codeOfRegistrationFailure(cause);
+  if (code !== undefined) {
+    const subject = cause instanceof WebMcpBoundaryError ? (cause.subject ?? '') : subjectOf(cause);
+    const prefix = reservedPrefixOf(subject);
     // **Guarded, because an observer must not be able to swallow the refusal it is observing.**
     // Unguarded, a throwing `onRegistration` escaped here and the registration failure never reached
     // the destination the build calls for — so an author lost the message telling them why their tool
@@ -426,20 +445,51 @@ function reportRegistrationFailure(
     // the observer's own failure to the consumer channel.
     try {
       binding.reportRegistrationEvent({
-        name: cause.subject ?? '',
-        prefix: prefix ?? '',
-        code: cause.code,
+        name: subject,
+        ...(prefix === undefined ? {} : { prefix }),
+        code,
       });
     } catch {
       // The binding already reports a throwing observer. Nothing further to do here, and rethrowing
-      // would put us back where this guard started.
+      // would put an observability defect back in the path of the refusal it was observing.
     }
   }
+
+  // Development says it out loud without needing anything wired, and names the declaration site.
+  // Production does not: a console this library writes to is not a channel an operator subscribed to,
+  // and the report above is.
   if (IS_DEVELOPMENT) {
-    binding.reportFailure(withSource(cause, source));
+    const described = withSource(cause, source);
+    // eslint-disable-next-line no-console -- the author-facing channel in development, deliberately.
+    console.error('[agent-mcp-react] a tool declaration was refused:', described);
+  }
+
+  // **Every destination that received this before still receives it.** `reportOperational` routes a
+  // boundary error to the operator's channel and anything else to the loud one, which re-throws from
+  // the provider's render. So the boundary errors go on as they always did — an operator's alarm is
+  // not something to move while removing a white screen — and a coded refusal that is NOT one of them
+  // stops here, because sending it onward is precisely how it reached the render throw.
+  if (cause instanceof WebMcpBoundaryError) {
+    binding.reportOperational(cause);
     return;
   }
+  if (code !== undefined) return;
+
+  // No code means this is not a refusal this library recognises, and an unknown is not something to
+  // absorb quietly. It goes to the operator's channel, which decides for itself what it can describe.
   binding.reportOperational(cause);
+}
+
+/** The code a refused declaration carries, or nothing when the cause is not one of ours. */
+function codeOfRegistrationFailure(cause: unknown): string | undefined {
+  if (cause instanceof WebMcpBoundaryError) return cause.code;
+  if (cause instanceof RuntimeError) return cause.code;
+  return undefined;
+}
+
+/** The tool name a refusal is about, as far as the cause carries one. */
+function subjectOf(cause: unknown): string {
+  return cause instanceof RuntimeError ? (cause.toolName ?? '') : '';
 }
 
 /** Attaches where the declaration came from, when the environment offered one. */

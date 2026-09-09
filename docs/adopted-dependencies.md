@@ -195,10 +195,12 @@ The lean React binding: `@mcp-b/webmcp-polyfill` plus types, React as a peer, on
 **Three disqualifiers, all the same species — a failure that becomes a log line:**
 
 1. **A rejected `registerTool` becomes `console.warn`.** A duplicate name does not throw; it warns and
-   the tool silently does not exist. The rule here is that development throws and names the
-   registration source, and production rejects the later registration and keeps the original
+   the tool silently does not exist. The rule here is that the later registration is refused, the
+   original is kept, and the refusal is delivered to a destination the application wired — with the
+   registration source named on the development console
    (see [duplicate and foreign names](design.md#duplicate-and-foreign-names)) — not that anything
-   continues as though nothing happened.
+   continues as though nothing happened. **The distinction is not throwing versus not throwing**; it
+   is whether anybody is told.
 2. **No registry available → `console.warn` and return.** The tool silently does not exist. This
    library has no degraded mode: [the provider](design.md#the-provider) fails loudly and names which
    of the four causes applied.

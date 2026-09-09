@@ -12,7 +12,7 @@ unexplainable state, and an unexplainable state is indistinguishable from a wron
   onToolResult={(event) => …}      // settled with a result
   onToolError={(event) => …}       // settled with a refusal, a throw or a cancellation
   onRegistryChange={(event) => …}  // the document's tool registry moved
-  onRegistration={(event) => …}    // a declaration refused before it became a tool
+  onRegistration={(event) => …}    // a declaration refused before it became a tool — every cause
   … />
 ```
 
@@ -30,6 +30,17 @@ NOT cover* — a page-script call the registry refuses before our callback runs 
 |---|---|---|
 | Who called | the agent, over the socket | any script on the page |
 | Passes | all six built gates | the declared schema, and nothing else |
+| A schema refusal is | reported to your observers | **invisible — see below** |
+
+**A page-script call with bad arguments produces no event at all, and reading that silence as "nobody
+called it" is the mistake to avoid.** The adopted registry validates arguments against the declared
+schema itself and throws before it ever invokes our callback, so there is no signal for this library
+to observe — not a decision it makes, a call it never receives. The refusal is real and the caller
+sees it; your log does not. A bridged call with the same bad arguments *is* reported, with the gate
+that refused it, which is what makes the asymmetry easy to miss.
+
+`tests/react/registry-route-validation.spec.tsx` pins that silence as a case, so a registry that ever
+stops pre-validating turns it red rather than changing what you see without saying so.
 
 Both appear on the same callbacks, and every record carries `route` as a **required** field. A separate
 hook for page calls would be one you wire while believing you have coverage.
@@ -90,6 +101,56 @@ Two more absences, measured rather than assumed:
 - **A page-script call refused by the REGISTRY produces no record at all.** A descriptor that declares
   an `inputSchema` is validated before the callback this library registered is ever invoked, so there
   is nothing for us to observe. That cannot be closed from inside this library.
+
+## Reading the registry from your own code
+
+**`document.modelContext` is not there when your component mounts, and a consumer that looks once
+stays empty forever.** The provider adopts the registry inside an effect and the adoption is
+asynchronous — it may install a portability shim first. React runs a child's effects before its
+parent's, so a component that reads the registry in its own mount effect is asking before the
+provider has answered. Nothing is wrong and nothing reports anything; the reader simply sees no
+registry and, having looked once, never learns otherwise.
+
+**Wire `onRegistryChange` and read it from there.** It fires when the registry's contents change,
+which for an application that declares any tools means the first registration — by which point the
+registry exists:
+
+```tsx
+<AgentMcpProvider
+  …
+  onRegistryChange={() => {
+    const registry = document.modelContext;
+    // Present from here on. Subscribe, enumerate, render — whatever your panel does.
+  }}
+>
+```
+
+That covers the ordinary case. **It does not cover an application that declares no tools at all**,
+where nothing ever changes and the event never fires. There is no public API today that resolves when
+the registry becomes available and nothing else; `ensureRegistry` exists internally and is deliberately
+not exported, because acquiring a page's registry belongs to the provider's lifecycle rather than to
+whoever imported a module. If you need readiness without a registration, poll for it on a short
+interval and stop when it appears — the same thing this repository's own end-to-end helpers do.
+
+**Do not read the registry at module scope.** It would run during server-side rendering, where there
+is no document at all.
+
+## The refused-declaration event
+
+`onRegistration` fires when a declaration is refused before it ever becomes a tool, and it carries
+every cause with the `code` that says which: a missing validator, a duplicate name, a name held by a
+foreign script, a reserved prefix.
+
+**A refused declaration does not unmount your application.** It used to: the refusal was re-thrown from
+the provider's render, so an author who forgot to install a validator got a blank page with the
+console message naming the fix underneath it. MCP is a second control interface onto one application,
+and a misconfigured second interface must not take down the first. What has not changed is that the
+tool is refused — absent from `tools/list`, uncallable by an agent and by any page script — and the
+refusal is now scoped to the declaration that earned it, so the other tools on the page survive it.
+
+The event is optional to wire, so a development build also writes the refusal to the console with the
+declaration site. That is the channel for an author who wired nothing; `onRegistration` is the one for
+an operator who did.
 
 ## The registry-change event
 

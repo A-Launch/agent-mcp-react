@@ -451,6 +451,35 @@ describe('the string rules', () => {
     expect(result.stdout).not.toContain('docs/media/demo.gif');
   });
 
+  it('an absolute link back into this repository is resolved and checked like a relative one', () => {
+    // The README is published to two places. Relative links work in the repository and are dead on
+    // the package page — sixteen of them were broken there before anyone looked — so the documentation
+    // links are absolute. An absolute link used to be skipped outright, which would have traded a
+    // working link for a lost guard.
+    const fx = fixture('public', {
+      'package.json': `${JSON.stringify({ name: 'x', repository: { url: 'https://github.com/acme/widget.git' } })}\n`,
+      'docs/real.md': '# Real\n\n## A heading\n',
+      'README.md': [
+        '# R',
+        '',
+        '[ok](https://github.com/acme/widget/blob/main/docs/real.md)',
+        '[ok anchor](https://github.com/acme/widget/blob/main/docs/real.md#a-heading)',
+        '[raw](https://raw.githubusercontent.com/acme/widget/main/docs/real.md)',
+        '[dead](https://github.com/acme/widget/blob/main/docs/missing.md)',
+        '[dead anchor](https://github.com/acme/widget/blob/main/docs/real.md#nope)',
+        // Somebody else's repository is still none of our business.
+        '[elsewhere](https://github.com/other/repo/blob/main/whatever.md)',
+        '',
+      ].join('\n'),
+    });
+    const result = run(fx.root);
+    expect(verdicts(result.stdout).link).toBe('FAIL');
+    expect(result.stdout).toContain('docs/missing.md');
+    expect(result.stdout).toContain('#nope');
+    expect(result.stdout).not.toContain('other/repo');
+    expect(result.stdout).not.toContain('docs/real.md → ');
+  });
+
   it('the four files that spell the patterns are exempt from every string rule', () => {
     const fx = fixture('public', {
       'scripts/lib/public-tree.mjs': '// matches /Users/alice and sk-ant-X and § and kaliper\n',

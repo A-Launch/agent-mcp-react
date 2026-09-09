@@ -58,14 +58,26 @@ export interface McpRegistryChangeEvent {
 /**
  * A declaration refused before it ever became a tool.
  *
- * It has no `callId` because there is no call: a reserved prefix is refused at DECLARATION, since by
- * the time a call arrives the name is already taken in a registry shared with every script on the
- * page and there is nothing left to refuse. Without an event here an author sees a tool silently
- * missing with nothing to explain it.
+ * It has no `callId` because there is no call: the refusal happens at DECLARATION, since by the time
+ * a call arrives the name is already taken in a registry shared with every script on the page and
+ * there is nothing left to refuse. Without an event here an author sees a tool silently missing with
+ * nothing to explain it.
+ *
+ * **Every cause arrives here, not only a reserved prefix.** A missing validator, a duplicate name, a
+ * foreign name and a reserved prefix all end a declaration before it becomes a tool, and each used to
+ * reach a different destination — one of them by throwing during render, which unmounted the
+ * application. They are one kind of event and they now have one channel; `code` says which.
  */
 export interface McpRegistrationEvent {
   readonly name: string;
-  /** The reserved prefix that refused it. */
-  readonly prefix: string;
+  /**
+   * The reserved prefix that refused it, when a prefix is what refused it.
+   *
+   * **Optional, because this event now carries every declaration this library refused** — a missing
+   * validator, a duplicate name, a foreign name — and only one of those is about a prefix. It was
+   * required when the reserved prefix was the single case reported here, and a required field that is
+   * meaningless for three of four causes is a field a consumer has to ignore.
+   */
+  readonly prefix?: string;
   readonly code: ReactRefusedCode | string;
 }

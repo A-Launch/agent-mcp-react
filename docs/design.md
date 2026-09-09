@@ -259,10 +259,19 @@ distinct causes that the library tells apart with the ownership record. Silent r
 prohibited in both, and neither is recovered from by renaming or retrying.
 
 **Another mounted component of this application** registered the name: an application error,
-`MCP_TOOL_NAME_DUPLICATE`. Development throws and names the registration source where the
-environment offers a stack; production rejects the later registration, preserves the original, and
-reports through the provider's unexpected-state destination rather than tearing the page down. The
-application fixes it by changing its own code, which is why naming the source matters.
+`MCP_TOOL_NAME_DUPLICATE`. The later registration is rejected, the original stays callable, and the
+refusal is reported — to `onRegistration` with its code in both builds, to the provider's
+unexpected-state destination, and on the development console with the registration source where the
+environment offers a stack. The application fixes it by changing its own code, which is why naming
+the source matters.
+
+**No refusal tears the page down, in either build.** Development used to throw this one from the
+provider's render, which unmounted the application over a mistake an author could fix in a second —
+and left the message naming that fix underneath a page that no longer rendered. MCP is a second
+control interface onto one application; a misconfigured second interface must not take down the
+first. What a refusal still does is refuse: the tool is absent from `tools/list` and callable by
+nobody, and the refusal is scoped to the declaration that earned it, so the other tools on the page
+are unaffected.
 
 **A script this library does not own** holds the name — another library, a widget, an extension:
 `MCP_TOOL_NAME_HELD_BY_FOREIGN_OWNER`. Reported separately because the application cannot fix it by

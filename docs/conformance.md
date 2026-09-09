@@ -105,6 +105,15 @@ shows up on a native registry — which this repository CAN now reach, and does,
 | `executeTool` input | `optional object inputObject` | `inputArgsJson` — a **JSON string** | **a JSON string** — an object is refused |
 | `execute`'s 2nd argument | `ToolExecuteCallbackOptions { required AbortSignal signal }` | `{ requestUserInteraction }` | **no second argument at all** |
 
+**A fourth, found from the outside rather than by reading the IDL.** The resolved package validates
+a call's arguments against the declared `inputSchema` **before** invoking the tool's callback, in
+`validateArgsForTool`. That is reasonable of it and this library does not fight it — but it means this
+library's own validation on the registry route never runs for a call that fails, and neither does the
+observation it would have reported. A page script gets a refusal; an operator watching `onToolError`
+gets nothing. What a NATIVE registry does here has **not been measured**, so whether the observation
+appears there is unknown rather than assumed; if it does not pre-validate, our check runs and the
+refusal is observed, and the case pinning the silence turns red.
+
 **Read the third column before drawing a conclusion from the first two.** The natural inference from
 "the package diverges from the standard" is that the standard describes what a browser does. On
 `executeTool` that is exactly backwards: **the draft is the outlier and both implementations agree.**
