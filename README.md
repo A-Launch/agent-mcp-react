@@ -1,5 +1,10 @@
 # `agent-mcp-react`
 
+[![gate](https://github.com/A-Launch/agent-mcp-react/actions/workflows/gate.yml/badge.svg?branch=main)](https://github.com/A-Launch/agent-mcp-react/actions/workflows/gate.yml)
+[![license](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![node](https://img.shields.io/badge/node-%3E%3D22-brightgreen.svg)](.nvmrc)
+[![react](https://img.shields.io/badge/react-%3E%3D18-61dafb.svg)](https://react.dev)
+
 **Make your React page an MCP server.**
 
 Expose a running React application as an MCP server, so an agent can drive it through typed tools
@@ -17,13 +22,6 @@ application actions the human UI already calls. It is not browser automation, an
 This library is the browser half. The MCP server runs in the tab. The page asks your app for a URL,
 connects out to your gateway, and answers from there. You still supply the gateway, a ticket minter,
 and an agent runtime where the MCP client lives.
-
-## Status
-
-`0.2.0`, Apache-2.0. Release notes: [docs/releases/0.2.0.md](docs/releases/0.2.0.md). Every version
-and what changed in it: [CHANGELOG.md](CHANGELOG.md).
-
-Not on the npm registry. Install it from a packed tarball — see below.
 
 ## What the agent can do
 
@@ -176,6 +174,7 @@ The provider takes `getUrl()` and never a credential.
 | To let an agent read state | [docs/exposing-state.md](docs/exposing-state.md) |
 | To bind Redux, Zustand, or a router | [docs/store-adapters.md](docs/store-adapters.md) |
 | The design, condensed | [docs/design.md](docs/design.md) |
+| What changed, and when | [CHANGELOG.md](CHANGELOG.md) · [release notes](docs/releases/0.2.0.md) |
 | Everything else | [docs/README.md](docs/README.md) |
 
 ## Local development
@@ -216,6 +215,19 @@ pnpm test:e2e               # three engines, real browser, real socket
 pnpm test:e2e:native        # opt-in: Chromium with a real native tool registry
 pnpm verify:consumer:runs   # loads an external project's production bundle in a browser
 ```
+
+## Contributing
+
+Issues and pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) owns every convention here —
+where code goes, the five invariants that fail silently, what the gate requires of a change, and the
+patterns that are refused outright. Read sections 2 and 3 before your first pull request; they are the
+setup and the gate, and everything else can be read when you need it.
+
+By participating you agree to the [code of conduct](CODE_OF_CONDUCT.md).
+
+**Found a security problem?** Do not open an issue. [SECURITY.md](SECURITY.md) says how to report it
+privately — a reachability hole in this library is reachable on every page that embeds it, from the
+moment the issue is readable.
 
 ## License
 
