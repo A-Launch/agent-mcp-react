@@ -1,4 +1,4 @@
-import { CONNECTION_STATUS, useMcpConnection, useMcpState, useMcpTabId } from '@agent-mcp/react';
+import { CONNECTION_STATUS, useMcpConnection, useMcpState, useMcpTabId } from 'agent-mcp-react';
 import type { ReactNode } from 'react';
 import { useState, useSyncExternalStore } from 'react';
 import { admitsSource, CATALOG, firstSourceFor } from '../catalog/kinds.ts';

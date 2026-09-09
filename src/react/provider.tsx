@@ -209,7 +209,7 @@ export interface AgentMcpProviderProps {
    * application that never asked for one.
    *
    * What it installs is a CHANNEL, not the inspector: a frozen object with a subscription and a
-   * snapshot reader and nothing callable. The inspector itself lives behind `@agent-mcp/react/devtools`
+   * snapshot reader and nothing callable. The inspector itself lives behind `agent-mcp-react/devtools`
    * and reads this — which is what keeps a panel out of the bundle of an application that never
    * imports one, and what keeps this module from importing a development affordance.
    *
@@ -230,7 +230,7 @@ export interface AgentMcpProviderProps {
    * validator lives in a subpath precisely so it is absent from a bundle that does not use it.
    *
    * ```ts
-   * import { createAjvValidator } from '@agent-mcp/react/validation';
+   * import { createAjvValidator } from 'agent-mcp-react/validation';
    * const validator = createAjvValidator();
    * <AgentMcpProvider validation={{ validator }} ... />
    * ```

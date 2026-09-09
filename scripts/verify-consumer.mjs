@@ -52,7 +52,7 @@ try {
   // The library is injected here rather than committed into the fixture's manifest, so the fixture
   // cannot drift from the tarball actually under test.
   const manifest = JSON.parse(readFileSync(join(workspace, 'package.json'), 'utf8'));
-  manifest.dependencies['@agent-mcp/react'] = `file:./${packed}`;
+  manifest.dependencies['agent-mcp-react'] = `file:./${packed}`;
   writeFileSync(join(workspace, 'package.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 
   step('installing the tarball into a project outside this repository…');

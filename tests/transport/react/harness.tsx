@@ -1,10 +1,10 @@
+import { cleanup, render } from '@testing-library/react';
 import {
   type BrowserConnection,
   connectClient,
   type Gateway,
   startGateway,
-} from '@agent-mcp/mock-agent';
-import { cleanup, render } from '@testing-library/react';
+} from 'agent-mcp-mock-agent';
 import type { ReactNode } from 'react';
 import type {
   AgentCapabilities,

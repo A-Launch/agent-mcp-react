@@ -26,7 +26,7 @@ import { CLAIM_REFUSED, WebMcpBoundaryError } from './errors.ts';
  * page. That is handled by refusing loudly on a marker that cannot be made sense of, never by
  * repairing one. Rebuilding a marker silently is how a second provider gets in.
  */
-const CLAIM_KEY = Symbol.for('@agent-mcp/react.document-provider-claim');
+const CLAIM_KEY = Symbol.for('agent-mcp-react.document-provider-claim');
 
 /** What the marker holds. Kept minimal: this is not a place to keep provider state. */
 interface ClaimMarker {

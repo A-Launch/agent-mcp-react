@@ -71,7 +71,7 @@ The three richer kinds each carry something the first four do not:
 ## The tools
 
 Three composition tools, declared by the application **shell at module scope** through
-`@agent-mcp/react/actions` — their owner is the document, not a screen, so they exist before React
+`agent-mcp-react/actions` — their owner is the document, not a screen, so they exist before React
 mounts:
 
 - `board.add_panel` — takes a **list** of `{ kind, source }`, so one request is one call and either all

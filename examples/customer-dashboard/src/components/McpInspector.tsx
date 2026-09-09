@@ -1,4 +1,4 @@
-import { createInspector } from '@agent-mcp/react/devtools';
+import { createInspector } from 'agent-mcp-react/devtools';
 import { useEffect, useRef, useState } from 'react';
 
 // Mounts the library's development inspector into this page, as developer chrome rather than as part

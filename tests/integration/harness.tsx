@@ -1,11 +1,11 @@
-import { RoutedScreensInMemory } from '@agent-mcp/example-customer-dashboard/src/router.tsx';
-import { DashboardProvider } from '@agent-mcp/example-customer-dashboard/src/state/dashboard.tsx';
-import { type BrowserConnection, connectClient, startGateway } from '@agent-mcp/mock-agent';
+import { RoutedScreensInMemory } from 'agent-mcp-example-customer-dashboard/src/router.tsx';
+import { DashboardProvider } from 'agent-mcp-example-customer-dashboard/src/state/dashboard.tsx';
+import { type BrowserConnection, connectClient, startGateway } from 'agent-mcp-mock-agent';
 // Imported for its SIDE EFFECT, exactly as the demonstrator's own entry point imports it: it declares
 // `shell.go_to` at module scope, before anything renders. Without this line the suite would mount the
 // screens and miss the one tool that is not owned by a screen — and step 13a, which checks that a
 // shell-owned tool SURVIVES the navigation that removes the others, would have nothing to find.
-import '@agent-mcp/example-customer-dashboard/src/shell-tools.ts';
+import 'agent-mcp-example-customer-dashboard/src/shell-tools.ts';
 // **The PURE entry point, and this is not a style choice.** `@testing-library/react` registers an
 // automatic `cleanup()` in `afterEach` whenever globals are enabled — which this project enables. That
 // unmounts the tree after EVERY case, and this suite's whole design is one application advanced by

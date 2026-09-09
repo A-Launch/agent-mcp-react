@@ -37,7 +37,7 @@ import { namesFromContent, roleOf, type SnapshotRole } from './roles.ts';
  * mint colliding tokens for one document — and a token that means two elements is precisely the
  * failure the never-reuse rule exists to make unreachable.
  */
-const STATE_KEY = Symbol.for('@agent-mcp/react.dom-reference-state');
+const STATE_KEY = Symbol.for('agent-mcp-react.dom-reference-state');
 
 /** What one reference remembers, beyond the element itself. */
 export interface ReferenceWitness {

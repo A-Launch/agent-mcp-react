@@ -20,7 +20,7 @@ import {
 // fresh page instance removes the marker from the host directly, exactly as a new document would not
 // have one. That is the test manipulating the environment, never the library offering a back door.
 
-const KEY = Symbol.for('@agent-mcp/react.page-instance-identity');
+const KEY = Symbol.for('agent-mcp-react.page-instance-identity');
 
 /** Simulates a fresh page instance — a reload, or a second document. */
 function newPageInstance(): void {

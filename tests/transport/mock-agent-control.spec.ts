@@ -1,5 +1,5 @@
-import { type MockAgent, startMockAgent } from '@agent-mcp/mock-agent';
 import { Server, type Transport } from '@modelcontextprotocol/server';
+import { type MockAgent, startMockAgent } from 'agent-mcp-mock-agent';
 import { afterEach, describe, expect, it } from 'vitest';
 import WebSocket from 'ws';
 

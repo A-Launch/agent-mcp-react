@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
 
+import { cleanup, render, waitFor } from '@testing-library/react';
 import {
   type BrowserConnection,
   connectClient,
   type Gateway,
   startGateway,
-} from '@agent-mcp/mock-agent';
-import { cleanup, render, waitFor } from '@testing-library/react';
+} from 'agent-mcp-mock-agent';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
@@ -36,7 +36,7 @@ import { declareSecureContext } from './harness.tsx';
 // sequential rather than
 // concurrent.
 
-const KEY = Symbol.for('@agent-mcp/react.page-instance-identity');
+const KEY = Symbol.for('agent-mcp-react.page-instance-identity');
 const validator = createAjvValidator();
 
 /** Puts the document back in the state a fresh page instance starts in. */

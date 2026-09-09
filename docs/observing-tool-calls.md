@@ -106,7 +106,7 @@ first sign would be a call refused as `foreign`, after the fact and on a differe
 ```
 
 ```ts
-import { createInspector } from '@agent-mcp/react/devtools';
+import { createInspector } from 'agent-mcp-react/devtools';
 const inspector = createInspector({ host: element });
 inspector.dispose();
 ```

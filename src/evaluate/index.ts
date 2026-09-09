@@ -3,7 +3,7 @@ import type { SchemaValidator } from '../runtime/validation.ts';
 import { CONTROL_LEVEL } from '../security/vocabulary.ts';
 import { evaluateExpression } from './evaluate.ts';
 
-// Level 3 — the subpath surface (`@agent-mcp/react/evaluate`).
+// Level 3 — the subpath surface (`agent-mcp-react/evaluate`).
 //
 // **Its own export so a build that never imports it never contains it** — the three levels of control
 // are separate layers, and nothing short of importing this one reaches Level 3. That is the first of

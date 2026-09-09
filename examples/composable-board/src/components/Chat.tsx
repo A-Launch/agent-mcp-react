@@ -1,4 +1,4 @@
-import { useMcpTabId } from '@agent-mcp/react';
+import { useMcpTabId } from 'agent-mcp-react';
 import type { FormEvent, ReactNode } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { resetChat, streamChat } from '../agent-client.ts';
