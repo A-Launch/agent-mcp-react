@@ -11,6 +11,22 @@ All notable changes to `agent-mcp-react` are recorded here. The format follows
 
 Nothing yet.
 
+## [0.2.3] — 2026-09-09
+
+### Added
+
+- **The README opens with a recording** of an agent composing a dashboard by calling the tools the page
+  declared — a twenty-second excerpt inline, linking the full three minutes. The left pane is the
+  agent's real tool calls.
+
+### Changed
+
+- `docs/media/` is exempt from the `citation` and `vocabulary` rules of the publish check, and from
+  nothing else. Compressed video is scanned like every other file and decodes to stray section marks
+  and short tokens by chance — 161 and 1790 findings on one recording — which is noise by
+  construction. `credential`, `personal-path` and `copyright-owner` still apply there, because those
+  patterns do not arise by accident.
+
 ## [0.2.2] — 2026-09-09
 
 Documentation only. `src/` is unchanged from [0.2.1](docs/releases/0.2.1.md).
@@ -88,7 +104,8 @@ The first release, made before this repository existed. Its notes are kept in
 repository's history, which begins at the initial public import. A tag of that name could only point
 at a later tree and misdescribe itself, so the entry links its notes instead of a tag.
 
-[Unreleased]: https://github.com/A-Launch/agent-mcp-react/compare/v0.2.2...develop
+[Unreleased]: https://github.com/A-Launch/agent-mcp-react/compare/v0.2.3...develop
+[0.2.3]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.3
 [0.2.2]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.2
 [0.2.1]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.1
 [0.2.0]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.0

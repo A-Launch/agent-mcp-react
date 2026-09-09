@@ -17,6 +17,13 @@ customers.set_filters({ health: ["at_risk"], arrMin: 1000000 })
 
 instead of opening filters, finding Health, clicking At risk, then setting a revenue floor by hand.
 
+[![An agent composing a dashboard by calling the tools the page declared](https://raw.githubusercontent.com/A-Launch/agent-mcp-react/main/docs/media/composable-board.gif)](docs/media/composable-board.mp4)
+
+*A person describes a dashboard; the agent composes it by calling the tools the page declared, and the
+panels it built are then driven by hand. Twenty seconds of the
+[full three-minute recording](docs/media/composable-board.mp4). The left pane is the agent's real tool
+calls — nothing there is a transcript written for the video.*
+
 The application keeps owning its state. MCP is a **second control interface** onto the same
 application actions the human UI already calls. It is not browser automation, and not a second store.
 
