@@ -217,6 +217,19 @@ pnpm test:e2e:native        # opt-in: Chromium with a real native tool registry
 pnpm verify:consumer:runs   # loads an external project's production bundle in a browser
 ```
 
+## Contributing
+
+Issues and pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) owns every convention here —
+where code goes, the five invariants that fail silently, what the gate requires of a change, and the
+patterns that are refused outright. Read sections 2 and 3 before your first pull request; they are the
+setup and the gate, and everything else can be read when you need it.
+
+By participating you agree to the [code of conduct](CODE_OF_CONDUCT.md).
+
+**Found a security problem?** Do not open an issue. [SECURITY.md](SECURITY.md) says how to report it
+privately — a reachability hole in this library is reachable on every page that embeds it, from the
+moment the issue is readable.
+
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
