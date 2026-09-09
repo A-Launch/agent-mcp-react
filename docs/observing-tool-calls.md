@@ -30,6 +30,17 @@ NOT cover* — a page-script call the registry refuses before our callback runs 
 |---|---|---|
 | Who called | the agent, over the socket | any script on the page |
 | Passes | all six built gates | the declared schema, and nothing else |
+| A schema refusal is | reported to your observers | **invisible — see below** |
+
+**A page-script call with bad arguments produces no event at all, and reading that silence as "nobody
+called it" is the mistake to avoid.** The adopted registry validates arguments against the declared
+schema itself and throws before it ever invokes our callback, so there is no signal for this library
+to observe — not a decision it makes, a call it never receives. The refusal is real and the caller
+sees it; your log does not. A bridged call with the same bad arguments *is* reported, with the gate
+that refused it, which is what makes the asymmetry easy to miss.
+
+`tests/react/registry-route-validation.spec.tsx` pins that silence as a case, so a registry that ever
+stops pre-validating turns it red rather than changing what you see without saying so.
 
 Both appear on the same callbacks, and every record carries `route` as a **required** field. A separate
 hook for page calls would be one you wire while believing you have coverage.
