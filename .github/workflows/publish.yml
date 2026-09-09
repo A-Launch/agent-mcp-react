@@ -97,10 +97,31 @@ jobs:
       - run: pnpm gate
       - run: pnpm verify:public --history
 
+      # **Packed with pnpm, published as that file, and the two must be the same file.**
+      # `publishConfig` field overrides are a pnpm feature: `pnpm pack` rewrites the `exports` map to
+      # point at `dist/`, and `npm publish` does not. Publishing the working tree with npm therefore
+      # uploads a manifest whose every subpath points at `./src/*.ts`, which `files` deliberately
+      # excludes — a package where every import fails, from a run where every check was green, because
+      # `verify:package` validates a pnpm-packed tarball that was never the artifact being uploaded.
+      # `scripts/verify-package.mjs` has said "this package must be packed and published with pnpm"
+      # since the release review that found it. This workflow did not, once, and shipped it.
+      #
+      # So: pack with pnpm, assert the tarball's own manifest resolves inside itself, and hand npm THAT
+      # file. npm reads the manifest from the tarball rather than the working tree, and `--provenance`
+      # still attaches the attestation.
+      - name: pack with pnpm, the only packer that applies publishConfig
+        run: pnpm pack --pack-destination .
+
+      - name: the tarball resolves every export it declares
+        run: node scripts/verify-package.mjs
+
       # `--access public` stated rather than relied on. The package name is unscoped, which already
       # defaults to public, so this changes nothing today — it is here so that a later move to a scope
       # cannot publish restricted by default and look like it worked.
       - name: publish
-        run: npm publish --access public --provenance
+        run: |
+          tarball="$(ls agent-mcp-react-*.tgz)"
+          echo "publishing $tarball"
+          npm publish "$tarball" --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

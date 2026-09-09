@@ -53,13 +53,13 @@ not nine browser-and-version combinations. What has been run, and what has not:
 Pack from this repo:
 
 ```bash
-pnpm pack                           # → agent-mcp-react-0.2.0.tgz
+pnpm pack                           # → agent-mcp-react-0.2.1.tgz
 ```
 
 Then depend on the tarball:
 
 ```jsonc
-{ "dependencies": { "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.0.tgz" } }
+{ "dependencies": { "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.1.tgz" } }
 ```
 
 A local directory dependency (`file:../agent-mcp-react`) does not work: `publishConfig` applies when
@@ -174,7 +174,7 @@ The provider takes `getUrl()` and never a credential.
 | To let an agent read state | [docs/exposing-state.md](docs/exposing-state.md) |
 | To bind Redux, Zustand, or a router | [docs/store-adapters.md](docs/store-adapters.md) |
 | The design, condensed | [docs/design.md](docs/design.md) |
-| What changed, and when | [CHANGELOG.md](CHANGELOG.md) · [release notes](docs/releases/0.2.0.md) |
+| What changed, and when | [CHANGELOG.md](CHANGELOG.md) · [release notes](docs/releases/0.2.1.md) |
 | Everything else | [docs/README.md](docs/README.md) |
 
 ## Local development

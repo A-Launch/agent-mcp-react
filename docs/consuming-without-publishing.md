@@ -5,7 +5,7 @@ four routes below fail in ways that still exit `0`.
 
 | Route | Works | Why |
 |---|---|---|
-| **A packed tarball** (`file:…/agent-mcp-react-0.2.0.tgz`) | **Yes** | The recommended route. Verified end to end by `pnpm verify:consumer` |
+| **A packed tarball** (`file:…/agent-mcp-react-0.2.1.tgz`) | **Yes** | The recommended route. Verified end to end by `pnpm verify:consumer` |
 | **A pnpm workspace** | **Yes** | How `examples/*` consume it in this repository |
 | **A git URL** | **On npm and yarn.** Awkward on pnpm | Needs a build on install; pnpm blocks lifecycle scripts by default |
 | **A local directory** (`file:../agent-mcp-react`) | **No** | `publishConfig` does not apply, so the export map points at `src/` |
@@ -14,14 +14,14 @@ four routes below fail in ways that still exit `0`.
 
 ```bash
 # In this repository
-pnpm pack                 # → agent-mcp-react-0.2.0.tgz  (runs `prepare`, so dist/ is always fresh)
+pnpm pack                 # → agent-mcp-react-0.2.1.tgz  (runs `prepare`, so dist/ is always fresh)
 ```
 
 ```jsonc
 // In the consuming project's package.json
 {
   "dependencies": {
-    "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.0.tgz"
+    "agent-mcp-react": "file:../agent-mcp-react/agent-mcp-react-0.2.1.tgz"
   }
 }
 ```
