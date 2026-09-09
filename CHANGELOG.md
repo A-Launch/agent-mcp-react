@@ -11,6 +11,18 @@ All notable changes to `agent-mcp-react` are recorded here. The format follows
 
 Nothing yet.
 
+## [0.2.1] — 2026-09-09
+
+### Fixed
+
+- **`0.2.0` was published broken and is deprecated. Install `0.2.1`.** Its manifest declared every
+  subpath as `./src/*.ts`, and `src/` is not in the package — so every import from it failed. The
+  release workflow published the working tree with `npm`, and `publishConfig` field overrides, which
+  rewrite the `exports` map to point at `dist/`, are a **pnpm** feature that `npm publish` does not
+  apply. `pnpm pack` produced a correct tarball throughout, which is why every check was green: the
+  artifact the checks validated was never the artifact being uploaded. The workflow now packs with
+  pnpm, asserts that tarball resolves every export it declares, and publishes that same file.
+
 ## [0.2.0] — 2026-09-09
 
 The first release published from this repository, and the version its `v0.2.0` tag names. Its notes
@@ -62,6 +74,7 @@ The first release, made before this repository existed. Its notes are kept in
 repository's history, which begins at the initial public import. A tag of that name could only point
 at a later tree and misdescribe itself, so the entry links its notes instead of a tag.
 
-[Unreleased]: https://github.com/A-Launch/agent-mcp-react/compare/v0.2.0...develop
+[Unreleased]: https://github.com/A-Launch/agent-mcp-react/compare/v0.2.1...develop
+[0.2.1]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.1
 [0.2.0]: https://github.com/A-Launch/agent-mcp-react/releases/tag/v0.2.0
 [0.1.0]: docs/releases/0.1.0.md
